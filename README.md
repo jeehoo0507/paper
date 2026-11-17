@@ -20,6 +20,7 @@
 | [`efficient-vision-kd/our paper.md`](<efficient-vision-kd/our paper.md>) | 우리 논문 목차 초안 |
 | [`efficient-vision-kd/Related Work/Efficient KD paper.md`](<efficient-vision-kd/Related Work/Efficient KD paper.md>) | **읽을 논문 목록** (내일 읽을 17편이 맨 위) |
 | [`efficient-vision-kd/Related Work/survey paper/survey - en.md`](<efficient-vision-kd/Related Work/survey paper/survey - en.md>) | 참고한 기존 서베이 (PART 1~3) |
+| [`efficient-vision-kd/Related Work/Efficient KD papers/`](<efficient-vision-kd/Related Work/Efficient KD papers>) | 축별 논문 PDF 62편 (1_Shrink ~ 6_Evaluation) |
 | [`efficient-vision-kd/Related Work/survey paper/survey- ko.md`](<efficient-vision-kd/Related Work/survey paper/survey- ko.md>) | 랩실 추천 국문 논문 (PART 4) |
 
 ### 읽는 순서 (추천)
@@ -40,5 +41,5 @@
 
 ### 참고
 
-- PDF는 저작권 때문에 올리지 않았음. 각 md 파일의 링크(arXiv 등)에서 받으면 됨.
+- 축별 논문 PDF와 목록: [`efficient-vision-kd/Related Work/Efficient KD papers/`](<efficient-vision-kd/Related Work/Efficient KD papers>). 폴더마다 README에 논문 이름·링크·파일명 표가 있음.
 - 분류와 주장은 초안. 논문을 읽으면서 바뀔 수 있음.
