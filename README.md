@@ -20,6 +20,7 @@
 | [`efficient-vision-kd/our paper.md`](<efficient-vision-kd/our paper.md>) | 우리 논문 목차 초안 |
 | [`efficient-vision-kd/Related Work/Efficient KD paper.md`](<efficient-vision-kd/Related Work/Efficient KD paper.md>) | **읽을 논문 목록** (내일 읽을 17편이 맨 위) |
 | [`efficient-vision-kd/Related Work/survey paper/survey - en.md`](<efficient-vision-kd/Related Work/survey paper/survey - en.md>) | 참고한 기존 서베이 (PART 1~3) |
+| [`efficient-vision-kd/notes/`](efficient-vision-kd/notes) | **논문 읽기 메모** (가이드 + 파트별 파일) |
 | [`efficient-vision-kd/Related Work/Efficient KD papers/`](<efficient-vision-kd/Related Work/Efficient KD papers>) | 축별 논문 PDF 62편 (1_Shrink ~ 6_Evaluation) |
 | [`efficient-vision-kd/Related Work/survey paper/survey- ko.md`](<efficient-vision-kd/Related Work/survey paper/survey- ko.md>) | 랩실 추천 국문 논문 (PART 4) |
 
