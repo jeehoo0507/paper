@@ -34,7 +34,6 @@ AIM Lab 서베이 작업 공간. 처음 온 사람이 **뭘 하는지, 어디부
 2. [`experiments/PLAN.md`](efficient-vision-kd/experiments/PLAN.md): **실험 계획** (기존 결과 포함)
 3. [`PROGRESS.md`](efficient-vision-kd/PROGRESS.md): 지금까지 어떻게 여기까지 왔나
 4. [`README.md`](efficient-vision-kd/README.md): 초기 정리 (주제, Q1~Q3)
-5. [`presentation/index.html`](efficient-vision-kd/presentation/index.html): 발표 자료. 방향 확정 전 버전이라 제목과 실험 장이 예전 내용
 
 논문 읽으러 왔으면:
 
@@ -50,7 +49,6 @@ efficient-vision-kd/
 ├── PROGRESS.md          진행 과정
 ├── our paper.md         방향, 제목, 목차 (확정)
 ├── experiments/PLAN.md  실험 계획
-├── presentation/        발표 자료
 ├── notes/               논문 읽기 메모 (축별 파일)
 └── Related Work/
     ├── Efficient KD paper.md      읽을 논문 목록

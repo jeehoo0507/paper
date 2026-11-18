@@ -56,7 +56,6 @@
 | 읽기 목록 | 우선 17편 (`Related Work/Efficient KD paper.md`) |
 | 읽기 메모 | `notes/1_Shrink.md` 초안 있음, 나머지는 템플릿 |
 | 실험 | Shrink 축 기존 결과 있음, 나머지 설계 확정·미실행 (`experiments/PLAN.md`) |
-| 발표 자료 | `presentation/index.html` (방향 확정 전 버전) |
 
 ## 다음
 
