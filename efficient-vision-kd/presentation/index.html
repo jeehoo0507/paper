@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ko" data-astryx-theme="neutral" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Efficient Vision KD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@astryxdesign/core@0.7.7/src/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@astryxdesign/core@0.7.7/dist/astryx.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@astryxdesign/theme-neutral@0.7.7/dist/theme.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg: #0b0b0b;
+  --surface: var(--color-background-surface, #262626);
+  --card: #141414;
+  --line: var(--color-border, #ffffff1a);
+  --line-strong: #ffffff2e;
+  --ink: var(--color-text-primary, #fff);
+  --muted: var(--color-text-secondary, #9e9e9e);
+  --dim: #6b6b6b;
+  --r: var(--radius-container, 0.75rem);
+  --shrink: #6ea8ff;
+  --skip: #5fd39a;
+  --reuse: #f2b45a;
+  --sub: #b892ff;
+  --warn: #ff7a7a;
+}
+html,body{height:100%;background:var(--bg);color:var(--ink);}
+body{margin:0;font-family:Figtree,"Noto Sans KR",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;}
+.deck{position:fixed;left:50%;top:50%;width:1280px;height:720px;transform:translate(-50%,-50%) scale(var(--k,1));transform-origin:center;}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:48px 84px 72px;box-sizing:border-box;}
+.slide.on{display:flex;}
+.kicker{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:0 0 18px;font-weight:600;}
+h1{font-size:60px;line-height:1.08;font-weight:700;margin:0;letter-spacing:-.02em;}
+h2{font-size:38px;line-height:1.15;font-weight:700;margin:0 0 30px;letter-spacing:-.015em;}
+.sub{color:var(--muted);font-size:20px;margin-top:20px;}
+.grid{display:grid;gap:16px;}
+.g2{grid-template-columns:repeat(2,1fr);} .g3{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(4,1fr);}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;}
+.card h3{margin:0 0 10px;font-size:19px;font-weight:700;}
+.card p{margin:0;color:var(--muted);font-size:15px;line-height:1.55;}
+.big{font-size:64px;font-weight:700;letter-spacing:-.03em;line-height:1;}
+.label{color:var(--muted);font-size:15px;margin-top:12px;line-height:1.5;}
+.src{color:var(--dim);font-size:12.5px;margin-top:10px;}
+.num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#fff;color:#000;font-weight:700;font-size:14px;margin-bottom:14px;}
+.axis{border-top:3px solid var(--c);}
+.axis h3{color:var(--c);}
+.axis dl{margin:14px 0 0;display:grid;grid-template-columns:64px 1fr;gap:8px 10px;font-size:14px;}
+.axis dt{color:var(--dim);} .axis dd{margin:0;color:var(--ink);}
+.row{display:grid;grid-template-columns:1.2fr 2fr;gap:20px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);}
+.row:last-child{border-bottom:0;}
+.row .k{font-weight:600;font-size:17px;} .row .v{color:var(--muted);font-size:15px;}
+.bar{display:grid;grid-template-columns:260px 1fr 70px;gap:16px;align-items:center;margin:14px 0;font-size:15px;}
+.bar .t{color:var(--muted);} .bar .track{height:12px;background:#1f1f1f;border-radius:6px;overflow:hidden;}
+.bar .fill{height:100%;background:var(--ink);border-radius:6px;} .bar .fill.z{background:var(--warn);width:2px;}
+.bar .n{font-weight:700;text-align:right;}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-strong);border-radius:999px;padding:8px 14px;font-size:14px;margin:0 8px 10px 0;}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--c,#fff);display:inline-block;}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);}
+th{color:var(--dim);font-weight:600;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;}
+td.m{color:var(--muted);}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:8px;vertical-align:middle;}
+.formula{font-family:"Figtree",sans-serif;font-size:24px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 26px;letter-spacing:.01em;}
+.formula sub{font-size:.6em;}
+.tag{display:inline-block;font-size:11.5px;color:#000;background:#fff;border-radius:6px;padding:2px 8px;font-weight:700;margin-left:10px;vertical-align:middle;letter-spacing:.04em;}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+.vs{display:flex;align-items:baseline;gap:18px;}
+.vs .arrow{color:var(--dim);font-size:28px;}
+.foot{position:absolute;left:84px;right:84px;bottom:26px;display:flex;justify-content:space-between;color:var(--dim);font-size:12.5px;pointer-events:none;}
+.progress{position:fixed;left:0;bottom:0;height:3px;background:#fff;transition:width .2s;}
+.nav{position:fixed;right:18px;top:16px;z-index:2;opacity:.35;transition:opacity .2s;}.nav:hover{opacity:1;}.nav{display:flex;gap:8px;}
+.nav button{background:transparent;border:1px solid var(--line-strong);color:var(--muted);border-radius:8px;width:34px;height:30px;cursor:pointer;font-size:14px;}
+.nav button:hover{color:var(--ink);border-color:var(--ink);}
+.refs li{margin:0 0 12px;color:var(--muted);font-size:15px;line-height:1.5;}
+.refs li b{color:var(--ink);font-weight:600;}
+.refs{padding-left:18px;margin:0;}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1 -->
+<section class="slide">
+  <p class="kicker">AIM Lab · Survey Proposal</p>
+  <h1>A Survey on Efficient<br>Knowledge Distillation for Vision</h1>
+  <p class="sub">증류 학습 자체의 비용을 줄이는 방법들의 분류, 비용 기준, 평가 방식</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <p class="kicker">Motivation</p>
+  <h2>증류는 학습 단계에서 비싸다</h2>
+  <div class="grid g2">
+    <div class="card">
+      <div class="big">1.7–2.4×</div>
+      <div class="label">teacher를 매 스텝 실행하면 늘어나는 학습 GPU 시간</div>
+      <div class="src">TinyViT, Table 3 (IN-21k, teacher 4종)</div>
+    </div>
+    <div class="card">
+      <div class="vs"><div class="big">300</div><div class="arrow">→</div><div class="big">9600</div></div>
+      <div class="label">좋은 KD 결과를 얻기 위해 늘린 epoch</div>
+      <div class="src">Patient and Consistent, Table 3 (ResNet-50 student)</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <p class="kicker">Gap</p>
+  <h2>비전 KD의 학습 비용을 다룬 서베이는 없다</h2>
+  <div class="card" style="padding:6px 28px;">
+    <div class="row"><div class="k">기존 KD 서베이</div><div class="v">지식 유형 · 학습 방식 · 구조로 분류. 비용 축 없음</div></div>
+    <div class="row"><div class="k">Efficient ViT 서베이</div><div class="v">효율 지표가 student 추론 비용만 셈</div></div>
+    <div class="row"><div class="k">On-Policy 증류 비용 서베이</div><div class="v">비용 계산 틀은 있으나 언어 모델 한정, 실험 없음</div></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <p class="kicker">Contributions</p>
+  <h2>세 가지 기여</h2>
+  <div class="grid g3">
+    <div class="card"><div class="num">1</div><h3>분류 축</h3><p>효율 KD 방법을 "비용을 어떻게 줄이는가"로 나눔</p></div>
+    <div class="card"><div class="num">2</div><h3>비용 기준</h3><p>일회성 · 반복 · 저장으로 나눈 비용 계산과 방법별 비교</p></div>
+    <div class="card"><div class="num">3</div><h3>평가 방식</h3><p>평균 정확도와 함께 봐야 할 지표 (WGA 등)</p></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <p class="kicker">Taxonomy</p>
+  <h2>네 가지 축</h2>
+  <div class="grid g4">
+    <div class="card axis" style="--c:var(--shrink)"><h3>Shrink</h3><p>한 스텝의 비용을 줄임</p>
+      <dl><dt>예</dt><dd>MaskedKD, DMAE</dd><dt>대가</dt><dd>절감 폭이 상수 배</dd></dl></div>
+    <div class="card axis" style="--c:var(--skip)"><h3>Skip</h3><p>샘플 · teacher 호출 · 구간을 건너뜀</p>
+      <dl><dt>예</dt><dd>데이터 프루닝 KD, Weak-to-Strong</dd><dt>대가</dt><dd>선택 비용, 정확도 상한</dd></dl></div>
+    <div class="card axis" style="--c:var(--reuse)"><h3>Reuse</h3><p>한 번 계산해 재사용</p>
+      <dl><dt>예</dt><dd>FKD, TinyViT</dd><dt>대가</dt><dd>저장 공간, 증강 고정</dd></dl></div>
+    <div class="card axis" style="--c:var(--sub)"><h3>Substitute</h3><p>더 싼 teacher · 데이터로 대체</p>
+      <dl><dt>예</dt><dd>체크포인트 teacher, Proteus</dd><dt>대가</dt><dd>품질 격차</dd></dl></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <p class="kicker">Observation</p>
+  <h2>비용 보고는 제각각이다</h2>
+  <div class="split">
+    <div>
+      <div class="bar"><div class="t">teacher 학습 비용을 센 논문</div><div class="track"><div class="fill z"></div></div><div class="n">0 / 18</div></div>
+      <div class="bar"><div class="t">저장 공간을 보고한 논문</div><div class="track"><div class="fill z"></div></div><div class="n">0 / 18</div></div>
+      <div class="bar"><div class="t">teacher 추론을 세지 않은 논문</div><div class="track"><div class="fill" style="width:27.8%"></div></div><div class="n">5 / 18</div></div>
+      <div class="bar"><div class="t">일회성 비용을 숫자로 보고 (Reuse)</div><div class="track"><div class="fill" style="width:21.4%"></div></div><div class="n">3 / 14</div></div>
+      <div class="src">Shrink · Skip 18편, Reuse 14편 본문 기준</div>
+    </div>
+    <div class="card">
+      <p class="kicker" style="margin-bottom:12px">같은 방법, 다른 분모</p>
+      <div class="vs"><div class="big">−51%</div><div class="label" style="margin:0">teacher 연산 기준<br>(논문 보고)</div></div>
+      <div class="vs" style="margin-top:22px"><div class="big" style="color:var(--muted)">≈−27%</div><div class="label" style="margin:0">학습 전체 기준<br>(우리 환산)</div></div>
+      <div class="src" style="margin-top:18px">MaskedKD, DeiT-S → DeiT-Ti, teacher 토큰 50%</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <p class="kicker">Cost Accounting <span class="tag">DRAFT</span></p>
+  <h2>비용을 세 부분으로 나눠 본다</h2>
+  <div class="grid g3" style="margin-bottom:22px;">
+    <div class="card"><h3>일회성</h3><p>teacher 출력 저장, 샘플 선택, 데이터 합성, teacher 확보</p></div>
+    <div class="card"><h3>반복</h3><p>매 스텝 teacher forward + student 학습 + KD 오버헤드</p></div>
+    <div class="card"><h3>저장</h3><p>저장한 logit · 특징 · 라벨의 용량</p></div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><p>student 단독 대비 학습 비용 배수</p></div>
+    <div class="card"><p>목표 정확도에 처음 닿기까지 쓴 비용</p></div>
+    <div class="card"><p>저장이 이득이 되는 손익분기 (epoch · student 수)</p></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <p class="kicker">Evaluation</p>
+  <h2>평균 정확도 밖에서 무엇을 잃는가</h2>
+  <div>
+    <span class="chip"><i></i>평균 정확도</span>
+    <span class="chip" style="--c:var(--shrink)"><i></i>WGA · 그룹별 정확도</span>
+    <span class="chip" style="--c:var(--skip)"><i></i>최악 클래스 정확도</span>
+    <span class="chip" style="--c:var(--reuse)"><i></i>분포 이동 (ImageNet-V2)</span>
+    <span class="chip" style="--c:var(--reuse)"><i></i>손상 강건성</span>
+    <span class="chip" style="--c:var(--sub)"><i></i>전이 성능 (선형 평가)</span>
+    <span class="chip" style="--c:var(--sub)"><i></i>teacher 일치율 · ECE</span>
+    <span class="chip" style="--c:var(--skip)"><i></i>학습 곡선 · seed 분산</span>
+  </div>
+  <div class="grid g4" style="margin-top:26px;">
+    <div class="card axis" style="--c:var(--shrink)"><h3>Shrink</h3><p>손상 강건성 · WGA</p></div>
+    <div class="card axis" style="--c:var(--skip)"><h3>Skip</h3><p>최악 클래스 · 학습 곡선</p></div>
+    <div class="card axis" style="--c:var(--reuse)"><h3>Reuse</h3><p>분포 이동 · ECE</p></div>
+    <div class="card axis" style="--c:var(--sub)"><h3>Substitute</h3><p>전이 성능 · teacher 일치율</p></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <p class="kicker">Experiments</p>
+  <h2>같은 코드 · 같은 GPU에서 축별 대표를 잰다</h2>
+  <div class="split">
+    <table>
+      <thead><tr><th>ID</th><th>방법</th><th>축</th></tr></thead>
+      <tbody>
+        <tr><td>B0</td><td>CE (student 단독)</td><td class="m">기준 1×</td></tr>
+        <tr><td>B1</td><td>Full KD</td><td class="m">기준</td></tr>
+        <tr><td>B2</td><td>Full KD, 절반 epoch</td><td class="m">기준</td></tr>
+        <tr><td>S1</td><td>teacher 토큰 50%</td><td><span class="dot" style="--c:var(--shrink)"></span>Shrink</td></tr>
+        <tr><td>K1</td><td>무작위 데이터 50% + KD</td><td><span class="dot" style="--c:var(--skip)"></span>Skip</td></tr>
+        <tr><td>K2</td><td>앞 30% epoch만 KD</td><td><span class="dot" style="--c:var(--skip)"></span>Skip</td></tr>
+        <tr><td>R1</td><td>teacher logit 저장 · 재사용</td><td><span class="dot" style="--c:var(--reuse)"></span>Reuse</td></tr>
+        <tr><td>U1</td><td>덜 학습된 teacher</td><td><span class="dot" style="--c:var(--sub)"></span>Substitute</td></tr>
+      </tbody>
+    </table>
+    <div class="grid" style="align-content:start">
+      <div class="card"><h3>데이터셋</h3><p>학습: ImageNet-100, Waterbirds<br>평가: ImageNet-V2, 손상 이미지, 전이 데이터셋</p></div>
+      <div class="card"><h3>측정</h3><p>teacher · student 시간 분리, 메모리, 저장 용량, 일회성 시간, epoch별 정확도</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <p class="kicker">Questions</p>
+  <h2>실험으로 답할 다섯 가지</h2>
+  <div class="card" style="padding:6px 28px;">
+    <div class="row"><div class="k">E1 · teacher 비중</div><div class="v">teacher가 학습 시간의 몇 %인가 (학습 없이 측정)</div></div>
+    <div class="row"><div class="k">E2 · 비용 분해</div><div class="v">축마다 비용이 어디서 줄고 어디로 가는가</div></div>
+    <div class="row"><div class="k">E3 · 지표별 순위</div><div class="v">무엇을 세느냐에 따라 가장 효율적인 방법이 바뀌는가</div></div>
+    <div class="row"><div class="k">E4 · 같은 예산</div><div class="v">같은 시간이면 KD가 그냥 오래 학습한 것보다 나은가</div></div>
+    <div class="row"><div class="k">E5 · 숨은 손실</div><div class="v">평균 정확도가 비슷할 때 다른 지표에서 차이가 나는가</div></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <p class="kicker">Plan</p>
+  <h2>다음 일주일</h2>
+  <div class="grid g3">
+    <div class="card"><div class="num">1</div><h3>읽기 · 메모</h3><p>축별 분담, 공통 양식으로 메모 (레포 notes/)</p></div>
+    <div class="card"><div class="num">2</div><h3>라이팅</h3><p>서론 · 배경 · 분류 · 쟁점 절 초안</p></div>
+    <div class="card"><div class="num">3</div><h3>실험</h3><p>서버에 큐로 걸고 라이팅과 병행</p></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <p class="kicker">References</p>
+  <h2>참고한 서베이</h2>
+  <ul class="refs">
+    <li><b>A Survey on Continuous Diffusion and Flow Language Models</b> · alphaxiv 2611.continuous-diffusion-flow-language-models</li>
+    <li><b>A Survey on Diffusion Language Models</b> · arXiv 2508.10875</li>
+    <li><b>Efficient On-Policy Distillation for Language Models: A Survey of Costs, Trade-Offs, and Evaluation</b> · preprints.org 202610.2702</li>
+    <li><b>Efficient Reasoning Models: A Survey</b> · arXiv 2504.10903</li>
+    <li><b>What is the State of Neural Network Pruning?</b> · arXiv 2003.03033</li>
+  </ul>
+</section>
+
+<div class="foot"><span>Efficient Vision KD</span><span id="count"></span></div>
+</div>
+<div class="progress" id="prog"></div>
+<div class="nav"><button id="prev" aria-label="이전">←</button><button id="next" aria-label="다음">→</button></div>
+<script>
+(function(){
+  var s=[].slice.call(document.querySelectorAll('.slide')),i=0;
+  try{var h=parseInt(location.hash.slice(1),10); if(h>0&&h<=s.length) i=h-1;}catch(e){}
+  function show(n){i=Math.max(0,Math.min(s.length-1,n));s.forEach(function(x,k){x.classList.toggle('on',k===i);});
+    document.getElementById('count').textContent=(i+1)+' / '+s.length;
+    document.getElementById('prog').style.width=((i+1)/s.length*100)+'%';
+    try{history.replaceState(null,'','#'+(i+1));}catch(e){}}
+  document.addEventListener('keydown',function(e){
+    if(['ArrowRight','PageDown',' '].indexOf(e.key)>=0){e.preventDefault();show(i+1);}
+    if(['ArrowLeft','PageUp'].indexOf(e.key)>=0){e.preventDefault();show(i-1);}
+    if(e.key==='Home')show(0); if(e.key==='End')show(s.length-1);});
+  document.getElementById('next').onclick=function(){show(i+1);};
+  document.getElementById('prev').onclick=function(){show(i-1);};
+  function fit(){document.documentElement.style.setProperty('--k',Math.min(innerWidth/1280,innerHeight/720));}
+  addEventListener('resize',fit);fit();
+  addEventListener('hashchange',function(){var h=parseInt(location.hash.slice(1),10);if(h>0&&h!==i+1)show(h-1);});
+  show(i);
+})();
+</script>
+</body>
+</html>

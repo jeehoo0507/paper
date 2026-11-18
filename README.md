@@ -17,6 +17,9 @@
 | 파일 | 내용 |
 |---|---|
 | [`efficient-vision-kd/README.md`](efficient-vision-kd/README.md) | 주제, 주장, Q1~Q3 상세 |
+| [`efficient-vision-kd/PROGRESS.md`](efficient-vision-kd/PROGRESS.md) | **지금까지 진행 과정** |
+| [`efficient-vision-kd/experiments/PLAN.md`](efficient-vision-kd/experiments/PLAN.md) | **실험 계획 (초안)** |
+| [`efficient-vision-kd/presentation/index.html`](efficient-vision-kd/presentation/index.html) | 발표 자료 (다운로드 후 브라우저로 열기) |
 | [`efficient-vision-kd/our paper.md`](<efficient-vision-kd/our paper.md>) | 우리 논문 목차 초안 |
 | [`efficient-vision-kd/Related Work/Efficient KD paper.md`](<efficient-vision-kd/Related Work/Efficient KD paper.md>) | **읽을 논문 목록** (내일 읽을 17편이 맨 위) |
 | [`efficient-vision-kd/Related Work/survey paper/survey - en.md`](<efficient-vision-kd/Related Work/survey paper/survey - en.md>) | 참고한 기존 서베이 (PART 1~3) |
