@@ -1,5 +1,7 @@
 # Efficient Vision KD Survey
 
+> 방향, 제목, 목차 확정본은 [our paper.md](<our paper.md>), 실험 계획은 [experiments/PLAN.md](experiments/PLAN.md). 아래는 초기 정리.
+
 **주제**: 비전 KD에서 *증류 학습 비용* 줄이는 방법 정리. (추론 비용 줄이는 KD 아님)
 
 **주장 (초안)**: 효율 KD 논문은 줄인 비용만 보고함. 안 보여주는 것:

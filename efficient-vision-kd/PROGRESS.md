@@ -39,18 +39,28 @@
 - 기존 실험으로 먼저 쓰고 실험은 나중에 추가.
 - → 라이팅은 문헌 기반으로 먼저, 실험은 병행해서 보강.
 
-## 7. 현재 상태
+## 7. 방향 확정 (2026-11-18)
+
+- **제목**: *Efficient Knowledge Distillation for Vision: A Survey and Controlled Study of What Is Saved and What Is Lost*
+- **형태**: 서베이 + 보고 실태 집계 + 통제 실험. 논문 나열 대신 현상을 숫자로 보임. 규모상 "벤치마크"라고는 부르지 않음.
+- **목차 변경**: 보고 실태 집계를 앞으로 당기고, 전략별 상세를 비교표로 줄이고, Protocol 절과 Findings 절을 새로 둠. 실험은 MaskedKD 사례 하나가 아니라 4축 전체.
+- **실험 설계**: 두 가지 상황(사전학습 student 미세조정 / 처음부터 학습)에서 축마다 예산 손잡이를 단계별로 돌림. KD > CE 확인과 잡음 기준을 먼저 둠.
+- **기존 결과 재사용**: 지난 MaskedKD 실험의 Waterbirds·CUB 결과가 Shrink 축에 그대로 쓰임. Waterbirds에서 토큰 15% 유지 시 평균 −3.4%p, WGA −28.8%p.
+- **근거 조사**: 데이터셋별로 KD > CE를 보고한 논문을 정리 (`experiments/PLAN.md` 맨 아래).
+
+## 8. 현재 상태
 
 | 항목 | 상태 |
 |---|---|
-| 목차 | 초안 (`our paper.md`) |
+| 방향, 제목, 목차 | 확정 (`our paper.md`) |
 | 읽기 목록 | 우선 17편 (`Related Work/Efficient KD paper.md`) |
-| 읽기 메모 | 템플릿만 (`notes/`) |
-| 실험 | 계획만 (`experiments/PLAN.md`), 미실행 |
-| 발표 자료 | `presentation/index.html` (브라우저로 열고 ←/→) |
+| 읽기 메모 | `notes/1_Shrink.md` 초안 있음, 나머지는 템플릿 |
+| 실험 | Shrink 축 기존 결과 있음, 나머지 설계 확정·미실행 (`experiments/PLAN.md`) |
+| 발표 자료 | `presentation/index.html` (방향 확정 전 버전) |
 
 ## 다음
 
-1. 17편 읽고 `notes/`에 메모
-2. 서버에서 실험 세팅 (B0로 시간 확인부터)
-3. 절별 초안 작성 후 Slack 공유
+1. ImageNet-100에서 CE와 Full KD를 짧게 돌려 KD > CE와 처리량 확인
+2. Waterbirds, CUB에서 Skip·Reuse·Substitute 축 실행
+3. ImageNet-100 기준점 실행, 평가 전용 셋 평가
+4. 17편 읽고 `notes/`에 메모, 절별 초안 작성 후 Slack 공유
