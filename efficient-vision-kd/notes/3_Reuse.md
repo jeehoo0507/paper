@@ -22,6 +22,7 @@ Reuse: 한 번 만들고 재사용
   - [실측·원논문] 정확도는 온라인 증류와 같거나 높음: MEAL V2 80.67 → 80.70%, ViT-T 74.5 (DeiT 증류) → 75.2%. (Table 4·5)
   - [실측·원논문] 강한 증강을 쓴 온라인 증류(FunMatch 80.5%)보다는 0.7%p 낮음 (79.8%). (4.1절)
   - [실측·원논문] label 압축에 따른 손실은 작음: 처음부터 학습 시 전체 저장 79.48% vs top-5 marginal smoothing 79.51%, MEAL V2에서는 80.65 vs 80.58%. (Table 6)
+  - [실측·원논문] 한 미니배치에 같은 이미지의 crop을 너무 많이 넣으면 떨어짐: 처음부터 학습한 ResNet-50에서 이미지당 8개 79.51% → 32개 74.61%. (Table 7)
   - [구조] 실험은 random crop과 flip만 사용함. RandAugment·Mixup·CutMix 같은 추가 증강은 쓰지 않았다고 명시. (4절)
 - 옮겨 간 비용: soft label 생성(teacher forward를 crop 수만큼)과 저장 공간. 저장 공간은 숫자로 보고: 이미지당 200 crop 기준 전체 저장 약 0.9 TB, hard label 5.3 GB, top-5 marginal smoothing 13.3 GB, top-10 22.2 GB (Table 2). label 생성 시간은 "느림"이라고만 적고 숫자 보고 안 됨 (Table 1). 다른 논문의 추정: 200 crop 904 GPU시간, 500 crop 2260 GPU시간 (05번 논문 Table 9).
 - 어떻게 쟀나: 단위 = 학습 시간 비(기준 방법 대비 배수), 저장 용량(GB) / teacher forward 셈? 학습 시간에는 없음(구조상 0). 생성 단계는 N / 일회성 비용 셈? 저장 용량 Y, 생성 시간 N / 하드웨어 = 보고 안 됨

@@ -21,6 +21,8 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 잃는 것:
   - [실측·원논문] 너무 이른 체크포인트는 떨어짐: 30% 지점에서 ResNet-110 → ResNet-32 70.74% vs 끝까지 학습 72.48%. (Table 3)
   - [구조] 가장 좋은 지점은 teacher마다 다르고 (WRN-40-2는 160 epoch, ResNet-110은 120 epoch), 선택 알고리즘은 student 구조를 고려하지 않음. (5절, 한계)
+  - [실측·원논문] 선택 알고리즘이 고정 중간 지점보다 못한 경우가 있음: WRN-40-2 → MobileNetV2에서 선택한 지점 68.58% vs 절반 지점 68.99%. (Table 3)
+  - [구조] "긴 cosine 스케줄의 중간 체크포인트"와 "짧은 스케줄로 끝까지 학습한 모델"은 다른 teacher임. 앞의 것을 얻으려면 스케줄을 끝까지 정해 두어야 함.
 - 옮겨 간 비용:
   - 선택 알고리즘은 체크포인트마다 복원용 디코더를 학습해 상호정보를 추정하므로 추가 연산이 듦. 논문도 선택한 지점이 중간 지점보다 비용이 높다고 적음 (부록 A.2). 숫자는 그림으로만 제시.
   - teacher–student 쌍과 체크포인트마다 온도와 손실 비율을 격자 탐색으로 다시 찾음 (부록 Table 4). 이 탐색 비용은 보고 안 됨.
@@ -48,6 +50,8 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 평균 정확도 외 평가: Places365로의 전이 미세조정 (Table 9). 그 외 없음.
 - 위치: Table 1–3·Fig. 3 (p. 4–5), Table 8 (p. 6), Fig. 4·Table 9·10 (p. 7), 부록 Table 14 (p. 10)
 - 메모:
+  - Table 8의 ESKD 행은 teacher 조기 종료와 증류 조기 중단이 함께 들어간 수치라 (예: ResNet-34 (50) + ESKD 29.02% 오류) 두 요인의 기여를 따로 읽을 수 없음. 표의 값은 오류율임.
+  - "KD error"는 teacher–student 예측 불일치 비율이며 정답 오류율과 다름 (Table 2–3).
   - ESKD는 Skip(구간)의 원형, 일찍 멈춘 teacher는 Substitute(싼 teacher)의 원형. 한 논문이 두 축에 걸침.
   - 논문은 KD를 언제 끄는지의 정확한 epoch을 본문 표에 적지 않음 (확인 안 함). 우리 실험의 "앞 구간 비율" 손잡이와 맞추려면 공식 코드나 부록 확인 필요.
   - "KD가 후반에 정확도를 해친다"(Fig. 3)는 관찰은 ImageNet·ResNet 조건에 한정.
@@ -55,11 +59,13 @@ Substitute: teacher나 데이터를 싼 대역으로
 ### 03. Learning from a Lightweight Teacher for Efficient KD ([arXiv: 2005.09163](https://arxiv.org/abs/2005.09163))
 - 효율화 방식: 큰 teacher를 목표 데이터에서 학습하는 대신, 아주 작은 teacher(LeNet5)를 쉬운 합성 데이터(SynMNIST)에서 학습해 그 soft target을 씀. student 출력 분포를 teacher 출력 분포에 맞추는 적대적 손실을 더함.
 - 얻는 것 (teacher의 크기와 1개 입력당 연산, 일반 KD의 teacher 대비): CIFAR-10에서 LeNet5 teacher 약 6.2만 매개변수·48만 FLOPs vs ResNet-18 teacher 1,120만 매개변수·3,720만 FLOPs. 약 두 자릿수 차이. (Table 8)
-- 잃는 것: [실측·원논문] 일반 KD와 비슷하거나 약간 낮음: CIFAR-10 ResNet-20 student, KD(teacher ResNet-18) 92.98% vs 제안 92.94%. MobileNetV2는 91.20 vs 91.57%, ShuffleNetV2는 92.17 vs 92.48%. (Table 3)
-- 옮겨 간 비용: 합성 데이터 생성, 판별기 학습(약 4,900 매개변수). Table 8에 판별기 크기와 FLOPs를 보고.
+- 잃는 것:
+  - [실측·원논문] 일반 KD와 비슷함: CIFAR-10 ResNet-20 student, KD(teacher ResNet-18) 92.98% vs 제안 92.94%. MobileNetV2는 91.20 vs 91.57%, ShuffleNetV2는 92.17 vs 92.48%. CIFAR-100 ResNet-20은 지도학습 68.38 → 69.39%. (Table 3)
+  - [구조] 작은 teacher의 출력에서 최댓값 확률을 **정답 클래스 위치로 바꿔 넣음** (§3.2.3). 즉 정답 라벨을 써서 분포를 재배열함. 목표 데이터의 의미 관계를 전달한다기보다 label smoothing에 가까움.
+- 옮겨 간 비용: 합성 데이터 생성, 작은 teacher 학습, 판별기 학습(약 4,900 매개변수). Table 8에는 판별기의 forward FLOPs만 있음. 판별기 backward와 적대적 최적화 비용은 빠져 있으므로 Table 8의 합을 전체 학습 비용으로 쓰면 안 됨. teacher forward만 비교하면 LeNet5 대 ResNet-18이 약 77배 (재계산).
 - 어떻게 쟀나: 단위 = 모델 매개변수 수, 입력 1개당 FLOPs. 학습 시간은 보고 안 됨 / teacher forward 셈? Y (FLOPs로) / 일회성 비용 셈? teacher 학습 시간 N (크기 비교만) / 하드웨어 = GTX 2080 Ti
 - 설정: CIFAR-10/100 student ResNet-20·MobileNetV2·ShuffleNetV2. 텍스트 분류와 UCF101 동작 인식도 실험.
-- 평균 정확도 외 평가: 없음
+- 평균 정확도 외 평가: 없음. 일부 비교에 t-검정 (p ≤ 0.05)이 있으나 그룹 성능과는 무관.
 - 위치: Table 3 (p. 6), Table 7·Fig. 4 (p. 8), Table 8 (p. 9)
 - 메모: 비용 지표가 teacher의 크기와 추론 FLOPs뿐이라 "teacher 학습이 얼마나 빨라졌나"는 직접 재지 않음. teacher가 목표 과제를 풀지 못하는데도(다른 데이터로 학습) 이득이 난다는 점에서 label smoothing 계열로 읽는 것이 맞음.
 
@@ -71,7 +77,7 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 잃는 것: [실측·원논문] 일반 KD보다 낮은 경우가 있음: Tiny-ImageNet ResNet-50에서 Tf-KD_reg +0.45%p vs 일반 KD +0.68%p. ImageNet에서 label smoothing과의 차이는 0.1~0.4%p로 작음. (Table 10·11)
 - 옮겨 간 비용: Tf-KD_self는 student를 한 번 더 학습해야 함 (자기 자신을 teacher로 만들기 위한 선행 학습)과 학습 중 그 모델의 forward. 숫자 보고 안 됨. Tf-KD_reg는 없음.
 - 어떻게 쟀나: 단위 = 없음 (정확도만) / teacher forward 셈? N / 일회성 비용 셈? N / 하드웨어 = 보고 안 됨
-- 설정: CIFAR-100, Tiny-ImageNet (200 epoch), ImageNet. MobileNetV2, ShuffleNetV2, ResNet-18/50, DenseNet-121, ResNeXt 등. 3회 평균 (일부).
+- 설정: CIFAR-100, Tiny-ImageNet (200 epoch), ImageNet (90 epoch). MobileNetV2, ShuffleNetV2, ResNet-18/50, DenseNet-121, ResNeXt 등. 3회 평균 (일부). Tf-KD_reg의 ImageNet 설정은 정답 확률 a = 0.99, 온도 20, α = 0.1. Tf-KD_self와 일반 KD는 하이퍼파라미터 탐색을 함.
 - 평균 정확도 외 평가: 없음
 - 위치: Table 1–4 (p. 4), Table 5–8 (p. 7), Table 9–11 (p. 8)
 - 메모:
@@ -80,7 +86,8 @@ Substitute: teacher나 데이터를 싼 대역으로
 
 ### 05. Be Your Own Teacher ([arXiv: 1905.08094](https://arxiv.org/abs/1905.08094))
 - 효율화 방식: 한 네트워크 안에서 가장 깊은 분류기가 얕은 구간에 붙인 보조 분류기들을 가르침 (자기 증류). 따로 teacher를 설계하고 학습하는 단계가 없음.
-- 얻는 것 (teacher 학습 + 증류의 2단계 방식 대비): CIFAR-100에서 학습 시간 26.98시간 → 5.87시간 (4.6배 단축), 정확도 79.33 → 81.04% (ResNet-50). (Fig. 1, 1절)
+- 얻는 것 (teacher 학습 + 증류의 2단계 방식 대비): CIFAR-100에서 학습 시간 26.98시간 (teacher 14.67 + 증류 12.31) → 5.87시간 (4.6배 단축). (Fig. 1, 1절) ResNet-50 정확도는 일반 KD 79.33% 대비 가장 깊은 출구 80.56% (Table 3). 본문의 81.04%는 여러 출구의 **앙상블** 값임 (Table 1).
+  - 같은 그림에서 일반 학습은 4.0시간이라 자기 증류가 일반 학습보다는 느림.
 - 잃는 것:
   - [구조] 학습 중 보조 분류기와 병목 층이 추가됨. 추론 때는 제거 가능.
   - [실측·원논문] 얕은 출구로 예측하면 빠르지만 정확도가 낮음: ResNet-50, 1/4 지점 출구 4.64배 가속에 67.87% (기준 77.68%). (Table 5)
@@ -89,18 +96,18 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 설정: CIFAR-100, ImageNet. ResNet-18/50/101/152, ResNeXt, WideResNet, VGG.
 - 평균 정확도 외 평가: 잡음 섞은 가중치에서의 정확도와 손실 (평탄한 최소점 분석, Fig. 4). 그 외 없음.
 - 위치: Fig. 1 (p. 2), Table 1·2 (p. 4), Table 3·4 (p. 5), Table 5 (p. 6)
-- 메모: teacher 학습 시간까지 포함해 실제 시간으로 비교한 초기 사례. 다만 하드웨어와 측정 조건이 없어 26.98시간의 내역(teacher 학습 대 증류)은 알 수 없음.
+- 메모: teacher 학습 시간까지 포함해 실제 시간으로 비교한 초기 사례. 다만 하드웨어와 측정 조건이 없음. 4.6배는 단일 출구·앙상블 구분과 비용 경계를 확인한 뒤에만 인용할 것. Table 5의 ResNet-18 값이 Table 4 DSN 행과 겹치는 등 표 간 일관성도 확인 필요 (Notion 정리에서 지적).
 
 ### 06. Deep Mutual Learning ([arXiv: 1706.00384](https://arxiv.org/abs/1706.00384))
 - 효율화 방식: 사전학습된 teacher 없이 여러 student가 동시에 학습하면서 서로의 예측 분포를 맞춤 (KL 손실).
-- 얻는 것: 비용 수치는 보고 안 됨. 보고한 것은 정확도: 혼자 학습하는 것보다 높고, 사전학습 teacher로 증류하는 것보다도 높다고 보고 (CIFAR-100, Market-1501; Table 2·4).
+- 얻는 것: 비용 수치는 보고 안 됨. 보고한 것은 정확도: CIFAR-100 MobileNet 두 개를 함께 학습하면 한 모델이 혼자 학습 73.65 → 76.21% (Table 2). Market-1501 ImageNet 사전학습 MobileNet의 single-query mAP 60.68 → 68.83% (Table 3). 사전학습 teacher로 증류하는 것보다도 높다고 보고 (Table 4).
 - 잃는 것: [구조] 학습 중 네트워크 K개를 동시에 돌려야 함. student 하나 기준으로는 학습 연산과 메모리가 K배.
 - 옮겨 간 비용: teacher 사전학습 비용이 "동료 네트워크의 동시 학습" 비용으로 바뀜. 숫자 보고 안 됨.
 - 어떻게 쟀나: 단위 = 없음 (정확도, mAP) / teacher forward 셈? N / 일회성 비용 셈? N / 하드웨어 = GTX 1080 1장
 - 설정: CIFAR-100 (200 epoch, batch 64), ResNet-32, MobileNet, InceptionV1, WRN-28-10. Market-1501 재식별 (100,000 반복).
 - 평균 정확도 외 평가: 재식별 mAP와 Rank-1 (다른 과제). 그 외 없음.
 - 위치: Table 1·2 (p. 5), Table 3·4 (p. 6), Fig. 2 (p. 7)
-- 메모: "teacher가 필요 없다"와 "비용이 적다"는 다른 말임을 보여 주는 사례. 모델 하나를 얻는 비용과 동료 전체의 비용을 구분해 적어야 함.
+- 메모: "teacher가 필요 없다"와 "비용이 적다"는 다른 말임을 보여 주는 사례. 모델 하나를 얻는 비용과 동료 전체의 비용을 구분해 적어야 함. 여러 GPU로 병렬화해 경과 시간이 줄어도 총 GPU 시간이 준다는 보장은 없음. 원래 동료 모델들도 학습할 계획이었는지가 공정한 기준선을 바꿈.
 
 ### 07. Snapshot Distillation ([arXiv: 1812.00123](https://arxiv.org/abs/1812.00123))
 - 효율화 방식: 순환 학습률로 한 번의 학습을 여러 주기로 나누고, 각 주기의 마지막 스냅샷이 다음 주기의 teacher가 됨. 여러 세대를 차례로 학습하는 방식을 한 세대 안에서 해결.
@@ -122,12 +129,13 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 설정: DINOv2-S/B/L/g → ViT-Ti/S/B/L (patch 14), ImageNet-1K 300 epoch, batch 1024. CLIP, SynCLR teacher도 실험.
 - 평균 정확도 외 평가: 강건성 (ImageNet-Sketch, A, R, C), 세부 분류 12종 평균, 분할(ADE20K), 깊이 추정(NYUd) (Table 3). DeiT 증류 대비 모든 항목에서 높음 (예: ViT-B에서 ImageNet-A 29.6 → 52.4%).
 - 위치: Fig. 1·2 (p. 2), Table 1·2 (p. 5), Table 3 (p. 6), Table 4–9 (p. 7–8), 부록 Table 14 (p. 16), 부록 A.8 (p. 18)
-- 메모: 데이터를 100분의 1로 줄였지만 student 학습 시간 자체는 일반 증류와 같음. 절감되는 것은 "데이터 접근"이지 연산이 아님. 공정한 비교에는 teacher가 본 데이터와 student가 본 데이터를 따로 적어야 함.
+- 메모: 부록 Table 19의 검증 시간 9시간 대 1시간은 "매 epoch 검증" 대 "학습 후 선형 평가 1회"라는 프로토콜 차이임. 비용 절감으로 읽으면 안 됨. DeiT 비교는 teacher 종류(RegNetY 대 DINOv2)까지 다르므로 순수한 데이터 대체 효과도 아님.
+- 메모 (계속): 데이터를 100분의 1로 줄였지만 student 학습 시간 자체는 일반 증류와 같음. 절감되는 것은 "데이터 접근"이지 연산이 아님. 공정한 비교에는 teacher가 본 데이터와 student가 본 데이터를 따로 적어야 함.
 
 ### 09. SRe2L (Squeeze, Recover and Relabel) ([arXiv: 2306.13092](https://arxiv.org/abs/2306.13092))
 - 효율화 방식: 데이터셋 응축. (1) 원본 데이터로 모델을 학습해 정보를 모델에 압축, (2) 그 모델의 BN 통계에 맞도록 합성 이미지를 복원, (3) 합성 이미지에 teacher로 soft label을 다시 붙임. 합성 단계에 원본 데이터가 필요 없어 메모리와 시간이 줄어듦.
 - 얻는 것 (기존 응축 방법 대비 합성 비용, Tiny-ImageNet, RTX 4090 1장): 이미지 1장·반복 1회당 시간 MTT 12.64 ms → 0.24 ms (ConvNet-4), 0.75 ms (ResNet-18). 최대 GPU 메모리 48.9 → 4.2 GB, 7.6 GB. (Table 1)
-- 잃는 것: [실측·원논문] 전체 데이터 학습과는 큰 차이가 남음: ImageNet-1K 클래스당 50장에서 최고 60.8% (전체 데이터 ResNet-18 69.76%, ResNet-50 76.13%). (1절, 2절)
+- 잃는 것: [실측·원논문] 전체 데이터 학습과는 큰 차이가 남음: ImageNet-1K 클래스당 50장에서 ResNet-101 student 60.8%, ResNet-18 student 46.8% (전체 데이터 ResNet-18 69.76%). 60.8%는 큰 student의 값이라는 점에 주의. (1절, Table 4; RDED Table 2에서도 같은 값)
 - 옮겨 간 비용: 압축 단계의 모델 학습(공개 사전학습 모델을 쓰면 0), 합성 반복, 재라벨링용 soft label 사전 생성과 저장 (FKD 방식). soft label 저장 용량은 이 논문에 숫자가 없음. 다른 논문의 측정: 응축 데이터의 30배 이상 (3_Reuse 09번).
 - 어떻게 쟀나: 단위 = 합성 시간(이미지·반복당 ms), 최대 GPU 메모리(GB) / teacher forward 셈? N (재라벨링 시간 없음) / 일회성 비용 셈? 합성 비용 Y, 압축 단계 학습과 재라벨링 N / 하드웨어 = RTX 4090 1장
 - 설정: Tiny-ImageNet, ImageNet-1K (224 해상도). 복원 모델 ResNet-18/50, 평가 student ResNet-18/50/101 등.
@@ -146,7 +154,8 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 설정: CIFAR-10/100, ImageNette, ImageWoof, Tiny-ImageNet, ImageNet-100, ImageNet-1K. teacher와 평가 모델은 ConvNet, ResNet-18, ResNet-101 등.
 - 평균 정확도 외 평가: 다른 구조로의 일반화 (Table 4). 그 외 없음.
 - 위치: 초록 (p. 1), Table 1 (p. 3), Table 2·3 (p. 7), Table 4 (p. 8), 부록 (p. 13)
-- 메모: 09번과 마찬가지로 soft label 저장이 숨은 비용. 실제 이미지 조각을 쓰므로 "합성 데이터"보다는 "teacher가 고른 부분집합"에 가까움 (Skip-데이터와 맞닿음).
+- 메모: 초록의 "7분"은 응축 데이터 **제작** 시간이고 student 학습 완료까지의 시간이 아님. 원본 실제 이미지에 접근해야 하므로 데이터 없는 증류(11·12번)와 제약이 다름. teacher 점수로 고른 패치가 소수 그룹을 보존하는지는 검증 안 됨.
+- 메모 (계속): 09번과 마찬가지로 soft label 저장이 숨은 비용. 실제 이미지 조각을 쓰므로 "합성 데이터"보다는 "teacher가 고른 부분집합"에 가까움 (Skip-데이터와 맞닿음).
 
 ### 11. Up to 100x Faster Data-free KD (FastDFKD) ([arXiv: 2112.06253](https://arxiv.org/abs/2112.06253))
 - 효율화 방식: 원본 데이터 없이 teacher를 역으로 풀어 합성 이미지를 만드는 증류에서, 합성 단계를 빠르게 함. 여러 샘플이 공유하는 공통 특징을 메타 학습으로 재사용해 샘플당 최적화 스텝을 수 회로 줄임.
@@ -156,8 +165,9 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 잃는 것:
   - [실측·원논문] 스텝을 줄일수록 정확도가 떨어짐: CIFAR-100 2스텝 69.76%, 5스텝 72.82%, 10스텝 74.34%. 가장 정확한 기존 방법 CMI(77.04%)보다는 낮음. (Table 1)
   - [실측·원논문] 원본 데이터로 학습한 것과 차이: ImageNet 68.61% vs 75.45%. (Table 2)
+  - [실측·원논문] 같은 쌍에서도 기존 방법보다 낮은 경우: CIFAR-100 WRN-40-2 → WRN-16-2에서 CMI 68.75% vs 제안 10스텝 65.12%. "정확도 손실 없이 100배"로 일반화하면 안 됨. (Table 1)
 - 옮겨 간 비용: 합성 자체가 데이터의 대체 비용. 생성기와 메타 학습의 연산은 보고한 GPU 시간에 포함.
-- 어떻게 쟀나: 단위 = 합성의 GPU 시간, 기준 방법 대비 배수. student 학습 시간은 따로 보고 안 됨 / teacher forward 셈? 합성 시간에 포함 / 일회성 비용 셈? 합성 Y, teacher 학습 N / 하드웨어 = GPU 1장 기준 추정 (종류 보고 안 됨)
+- 어떻게 쟀나: 단위 = 합성의 GPU 시간, 기준 방법 대비 배수. student 학습 시간은 평가 지표 정의에서 명시적으로 제외함 (Evaluation Metrics, p. 5) / teacher forward 셈? 합성 시간에 포함 / 일회성 비용 셈? 합성 Y, teacher 학습 N / 하드웨어 = GPU 1장 기준 추정 (종류 보고 안 됨)
 - 설정: CIFAR-10/100 여러 쌍, ImageNet ResNet-50 → ResNet-50·ResNet-18·MobileNetV2, NYUv2 분할.
 - 평균 정확도 외 평가: 없음 (분할 mIoU는 다른 과제)
 - 위치: Fig. 1 (p. 1), Table 1·2 (p. 6), Table 3–5 (p. 7)
@@ -174,10 +184,12 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 설정: CIFAR-10/100, Tiny-ImageNet, ImageNet. ResNet-34 → ResNet-18, WRN-40-2 → WRN-16-1/16-2/40-1, VGG-11 → ResNet-18. 3회 평균 (부록).
 - 평균 정확도 외 평가: 합성 데이터의 다양성 지표 (Table 4). 그 외 없음.
 - 위치: Fig. 1 (p. 1), Table 1·2 (p. 7), Table 4–7 (p. 8), 부록 Table 14 (p. 11)
-- 메모: 11번과 달리 합성 + 증류의 전체 시간을 보고함. 두 논문의 "배수"는 분모(합성만 대 전체)와 하드웨어가 달라 직접 비교할 수 없음.
+- 메모: 같은 Table 2에서 기존 FM(E=100)은 2.23시간에 67.15%로, 제안 방법과의 시간 차이는 작음. 배수는 비교 대상(DeepInv)과 epoch 예산에 따라 달라짐. 클래스 임베딩에 쓰는 사전학습 텍스트 인코더(CLIP)의 비용은 계산에 없음.
+- 메모 (계속): 11번과 달리 합성 + 증류의 전체 시간을 보고함. 두 논문의 "배수"는 분모(합성만 대 전체)와 하드웨어가 달라 직접 비교할 수 없음.
 
 ## 축 분류 메모
 
+- 팀 Notion 정리(KD - Substitute)의 구분을 따르면 세 갈래: (1) teacher의 역할을 줄이거나 없앰 (04 Tf-KD, 05 BYOT, 06 DML, 07 Snapshot), (2) teacher를 일부러 약하게 만듦 (01 체크포인트, 02 조기 종료, 03 경량 teacher), (3) 데이터를 바꿔 teacher를 조정함 (08 Proteus, 09 SRe2L, 10 RDED, 11 FastDFKD, 12 NAYER). 공통 전제는 "teacher가 정확하다고 KD가 잘 되는 것은 아니다".
 - 02번 On the Efficacy of KD는 ESKD(Skip-구간)와 일찍 멈춘 teacher(Substitute)를 함께 제안함.
 - 05번 Be Your Own Teacher, 06번 Deep Mutual Learning, 07번 Snapshot Distillation은 "별도 teacher 없음" 계열. teacher 준비 비용은 0이지만 학습 중 추가 연산(보조 분류기, 동료 네트워크, 이전 스냅샷 forward)이 남음.
 - 09–12번(데이터 응축, 데이터 없는 증류)은 절감 대상이 "원본 데이터 접근"이나 "합성 시간"이고, 일반 KD 대비 student 학습 비용을 줄였다는 수치는 없음. 비교표에서 분모를 따로 표시해야 함.
