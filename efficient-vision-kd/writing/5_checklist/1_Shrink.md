@@ -12,14 +12,14 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | S-01 | MaskedKD | 셈 (메모: Y (teacher만 셈, student 학습 비용은 분모에 없음)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N (teacher 학습 비용 없음)) | 메모에 없음 | teacher FLOPs(학습 전체 합, PFLOPs), 처리량(img/s), GPU 메모리 | RTX A6000 1장, FP32, batch 128 (부록 A) | [arXiv: 2302.10494](https://arxiv.org/abs/2302.10494) | |
 | S-02 | DMAE | 셈 (메모: Y (증류 사전학습의 GPU 시간에 포함)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N (teacher 사전학습 비용 없음)) | 메모에 없음 | 메모에 없음 | NVIDIA A5000 1장. Table 7은 사전학습·미세조정·합계 G… | [arXiv: 2208.12256](https://arxiv.org/abs/2208.12256) | |
-| S-03 | Dyna-DINO | 셈 (메모: Y (보고한 절감률 자체가 teacher 연산 오버헤드의 감소분, Tab…) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | 메모에 없음 | NVIDIA L40S·RTX A6000·L40 등이 섞인 클러스터 (p.… | [arXiv: 2606.19483](https://arxiv.org/abs/2606.19483) | |
+| S-03 | Dyna-DINO (정정 있음: 메모 참고) | 셈 (메모: Y (보고한 절감률 자체가 teacher 연산 오버헤드의 감소분, Tab…) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | 메모에 없음 | NVIDIA L40S·RTX A6000·L40 등이 섞인 클러스터 (p.… | [arXiv: 2606.19483](https://arxiv.org/abs/2606.19483) | |
 | S-04 | Asymmetric Masked Distillation (AMD) | 셈 (메모: Y (학습 전체의 실제 시간)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N (teacher 사전학습 비용 없음)) | 있음 (메모: 저장 용량 수치 언급) | 메모에 없음 | A100 16장에서 200 epoch을 학습하며 시간 측정 (Table… | [arXiv: 2311.03149](https://arxiv.org/abs/2311.03149) | |
 | S-05 | MaskAlign | 셈 (메모: Y로 보임 (사전학습 속도 비교, 내역 없음)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N (CLIP teacher 사전학습 비용 없음)) | 메모에 없음 | 메모에 없음 | 보고 안 됨. Table 7의 시간은 절대값이 아니라 상대 배수임: 제안… | [arXiv: 2211.08887](https://arxiv.org/abs/2211.08887) | |
 | S-06 | Decoupled KD (DKD) | 배치당 학습 시간을 "데이터 처리 + 순전파·역전파 + 메모리 갱신"의 합으로 정의하나 t… | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | 메모에 없음 | 보고 안 됨. 단위는 배치당 학습 시간(ms)과 추가 매개변수 수 (Fi… | [arXiv: 2203.08679](https://arxiv.org/abs/2203.08679) | |
-| S-07 | Information Theoretic Representation Distillation | 셈 (메모: Y (학습 전체의 처리량으로 측정)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 있음 (메모: 저장 용량 수치 언급) | 메모에 없음 | RTX 2080 Ti 1장. 메모리 8 GB 제약에 맞게 방법마다 배치… | [arXiv: 2112.00459](https://arxiv.org/abs/2112.00459) | |
+| S-07 | Information Theoretic Representation Distillation (정정 있음: 메모 참고) | 셈 (메모: Y (학습 전체의 처리량으로 측정)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 있음 (메모: 저장 용량 수치 언급) | 메모에 없음 | RTX 2080 Ti 1장. 메모리 8 GB 제약에 맞게 방법마다 배치… | [arXiv: 2112.00459](https://arxiv.org/abs/2112.00459) | |
 | S-08 | Understanding the Role of the Projector in KD | 안 셈 (메모: N) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | 메모에 없음 | NVIDIA RTX A5000 1장 (p. 5). 학습 시간이나 연산량의… | [arXiv: 2303.11098](https://arxiv.org/abs/2303.11098) | |
-| S-09* | Parameter-Efficient and Student-Friendly Knowledge Distillat… | 확인 안 함 (PDF가 저장소에 없어 이번 보강에서 제외). | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 확인 안 함 (PDF가 저장소에 없어 이번 보강에서 제외). | 메모에 없음 | 메모에 없음 | 메모에 없음 | [원문](https://arxiv.org/abs/2205.15308) | |
-| S-10* | Knowledge Distillation from A Stronger Teacher | 확인 안 함 (PDF가 저장소에 없어 이번 보강에서 제외). | 메모에 없음 | 메모에 없음 | 확인 안 함 (PDF가 저장소에 없어 이번 보강에서 제외). | 메모에 없음 | 메모에 없음 | 메모에 없음 | [원문](https://arxiv.org/abs/2205.10536) | |
+| S-09* | Parameter-Efficient and Student-Friendly Knowledge Distillat… (정정 있음: 메모 참고) | 확인 안 함 (PDF가 저장소에 없어 이번 보강에서 제외). | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 확인 안 함 (PDF가 저장소에 없어 이번 보강에서 제외). | 메모에 없음 | 메모에 없음 | 메모에 없음 | [원문](https://arxiv.org/abs/2205.15308) | |
+| S-10* | Knowledge Distillation from A Stronger Teacher (정정 있음: 메모 참고) | 확인 안 함 (PDF가 저장소에 없어 이번 보강에서 제외). | 메모에 없음 | 메모에 없음 | 확인 안 함 (PDF가 저장소에 없어 이번 보강에서 제외). | 메모에 없음 | 메모에 없음 | 메모에 없음 | [원문](https://arxiv.org/abs/2205.10536) | |
 
 ## 치른 것 (성능)
 
@@ -27,14 +27,14 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | S-01 | MaskedKD | 있음 (메모) | 있음 (메모: 그룹) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 분포 이동·손상) | 있음 (메모: 전이) | 메모: 3 seed | 메모에 없음 | |
 | S-02 | DMAE | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
-| S-03 | Dyna-DINO | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
+| S-03 | Dyna-DINO (정정 있음: 메모 참고) | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
 | S-04 | Asymmetric Masked Distillation (AMD) | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
 | S-05 | MaskAlign | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
 | S-06 | Decoupled KD (DKD) | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
-| S-07 | Information Theoretic Representation Distillation | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| S-07 | Information Theoretic Representation Distillation (정정 있음: 메모 참고) | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
 | S-08 | Understanding the Role of the Projector in KD | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
-| S-09* | Parameter-Efficient and Student-Friendly Knowledge Distillat… | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: teacher 일치) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
-| S-10* | Knowledge Distillation from A Stronger Teacher | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 분포 이동·손상) | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| S-09* | Parameter-Efficient and Student-Friendly Knowledge Distillat… (정정 있음: 메모 참고) | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: teacher 일치) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| S-10* | Knowledge Distillation from A Stronger Teacher (정정 있음: 메모 참고) | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 분포 이동·손상) | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
 
 ## 비교
 
@@ -42,11 +42,11 @@
 |---|---|---|---|---|---|
 | S-01 | MaskedKD | | | | |
 | S-02 | DMAE | | | | |
-| S-03 | Dyna-DINO | | | | |
+| S-03 | Dyna-DINO (정정 있음: 메모 참고) | | | | |
 | S-04 | Asymmetric Masked Distillation (AMD) | | | | |
 | S-05 | MaskAlign | | | | |
 | S-06 | Decoupled KD (DKD) | | | | |
-| S-07 | Information Theoretic Representation Distillation | | | | |
+| S-07 | Information Theoretic Representation Distillation (정정 있음: 메모 참고) | | | | |
 | S-08 | Understanding the Role of the Projector in KD | | | | |
-| S-09* | Parameter-Efficient and Student-Friendly Knowledge Distillat… | | | | |
-| S-10* | Knowledge Distillation from A Stronger Teacher | | | | |
+| S-09* | Parameter-Efficient and Student-Friendly Knowledge Distillat… (정정 있음: 메모 참고) | | | | |
+| S-10* | Knowledge Distillation from A Stronger Teacher (정정 있음: 메모 참고) | | | | |

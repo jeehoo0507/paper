@@ -1,6 +1,6 @@
 # 4_Substitute 메모
 
-> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 이후 원문 검수에서 고쳐야 할 곳 20건이 나왔고 아직 반영하지 않았다. 수치를 쓰기 전에 [`audit/README.md`](audit/README.md)의 해당 줄을 먼저 본다.
+> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 원문 검수에서 나온 정정은 해당 논문의 **정정** 줄에 반영했다(2026-11-19). "직접 대조"는 이번에 원문을 다시 확인한 것, "검수 보고서 근거"는 [`audit/`](audit/README.md)의 원문 대조 결과를 옮긴 것이다. 정정이 없는 논문도 사람이 원문과 다시 대조하지는 않았다.
 
 Substitute: teacher나 데이터를 싼 대역으로  
 논문 목록과 PDF: [`../Related Work/Efficient KD papers/4_Substitute/`](<../Related Work/Efficient KD papers/4_Substitute>)  
@@ -82,6 +82,7 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 설정: CIFAR-100, Tiny-ImageNet (200 epoch), ImageNet (90 epoch). MobileNetV2, ShuffleNetV2, ResNet-18/50, DenseNet-121, ResNeXt 등. 3회 평균 (일부). Tf-KD_reg의 ImageNet 설정은 정답 확률 a = 0.99, 온도 20, α = 0.1. Tf-KD_self와 일반 KD는 하이퍼파라미터 탐색을 함.
 - 평균 정확도 외 평가: 없음
 - 위치: Table 1–4 (p. 4), Table 5–8 (p. 7), Table 9–11 (p. 8)
+- **정정 (검수 보고서 근거)**: 표 11에서 수치와 차이가 불일치: ResNet-50 LSR 76.38, 기준 75.77이면 +0.61%p인데 표는 +0.51%p. 원점수로 계산한 Tf-KD_reg 차이는 +0.04%p, 표기된 상승폭 기준이면 +0.14%p. 인용 시 출처와 재계산을 명시. [표 11](https://www.alphaxiv.org/pdf/1909.11723v3?page=8)
 - 메모:
   - Tf-KD_reg는 teacher 비용이 0인 기준점. "teacher 연산을 0으로 줄였을 때 남는 이득"을 보여 주는 대조군으로 쓸 수 있음.
   - 두 변형의 준비 비용이 전혀 다름 (self는 선행 학습 1회, reg는 0). 한 줄로 묶어 "teacher 없음"이라고 쓰면 안 됨.
@@ -98,6 +99,7 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 설정: CIFAR-100, ImageNet. ResNet-18/50/101/152, ResNeXt, WideResNet, VGG.
 - 평균 정확도 외 평가: 잡음 섞은 가중치에서의 정확도와 손실 (평탄한 최소점 분석, Fig. 4). 그 외 없음.
 - 위치: Fig. 1 (p. 2), Table 1·2 (p. 4), Table 3·4 (p. 5), Table 5 (p. 6)
+- **정정 (검수 보고서 근거)**: 앙상블 81.04%, 가장 깊은 출구 80.56%가 맞음. 표 5의 정확도 열은 표 4의 DSN 행과 같음. 표 5의 4.64배 추론 가속을 표 1 성능과 한 쌍으로 인용할 근거는 약함. 학습 시간 5.87 h는 teacher 준비까지 합친 기존 KD 26.98 h보다 짧고 student 단독 4.03 h보다 긺. [Fig. 1](https://www.alphaxiv.org/pdf/1905.08094v1?page=2) · [표 4–5](https://www.alphaxiv.org/pdf/1905.08094v1?page=5)
 - 메모: teacher 학습 시간까지 포함해 실제 시간으로 비교한 초기 사례. 다만 하드웨어와 측정 조건이 없음. 4.6배는 단일 출구·앙상블 구분과 비용 경계를 확인한 뒤에만 인용할 것. Table 5의 ResNet-18 값이 Table 4 DSN 행과 겹치는 등 표 간 일관성도 확인 필요 (Notion 정리에서 지적).
 
 ### 06. Deep Mutual Learning ([arXiv: 1706.00384](https://arxiv.org/abs/1706.00384))
@@ -143,6 +145,7 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 설정: Tiny-ImageNet, ImageNet-1K (224 해상도). 복원 모델 ResNet-18/50, 평가 student ResNet-18/50/101 등.
 - 평균 정확도 외 평가: 다른 구조로의 일반화 (Table 5), 지속 학습 (Fig. 6). 그 외 없음.
 - 위치: Fig. 1 (p. 1), Table 1 (p. 3), Table 4·5 (p. 9), 부록 Table 7 (p. 15)
+- **정정 (검수 보고서 근거)**: 클래스당 50장에서 60.8%는 ResNet-101 student, ResNet-18은 46.8%. 복구 단계는 고정 모델의 순전파와 입력 이미지에 대한 역전파를 씀. 오프라인 재라벨링 시간은 보고 안 됨. [§3](https://www.alphaxiv.org/pdf/2306.13092v3?page=4) · [표 4–5](https://www.alphaxiv.org/pdf/2306.13092v3?page=9)
 - 메모: "데이터를 대체해 student 학습을 싸게 한다"는 쪽이지만 응축 과정 자체가 teacher에 크게 의존함 (BN 통계, soft label). 응축 데이터로 학습할 때의 student 학습 비용과 응축을 만드는 비용은 서로 다른 단계라 따로 적어야 함.
 
 ### 10. RDED ([arXiv: 2312.03526](https://arxiv.org/abs/2312.03526))
@@ -186,6 +189,7 @@ Substitute: teacher나 데이터를 싼 대역으로
 - 설정: CIFAR-10/100, Tiny-ImageNet, ImageNet. ResNet-34 → ResNet-18, WRN-40-2 → WRN-16-1/16-2/40-1, VGG-11 → ResNet-18. 3회 평균 (부록).
 - 평균 정확도 외 평가: 합성 데이터의 다양성 지표 (Table 4). 그 외 없음.
 - 위치: Fig. 1 (p. 1), Table 1·2 (p. 7), Table 4–7 (p. 8), 부록 Table 14 (p. 11)
+- **정정 (검수 보고서 근거)**: 5–15배는 DeepInv 기준. CIFAR-100, 같은 100 epoch에서 FM 대비 2.23 → 2.15 h는 약 1.04배. 합성만 잰 NYUv2에서는 두 방법 모두 0.82 h. [Fig. 1](https://www.alphaxiv.org/pdf/2310.00258v2?page=1) · [표 2](https://www.alphaxiv.org/pdf/2310.00258v2?page=7)
 - 메모: 같은 Table 2에서 기존 FM(E=100)은 2.23시간에 67.15%로, 제안 방법과의 시간 차이는 작음. 배수는 비교 대상(DeepInv)과 epoch 예산에 따라 달라짐. 클래스 임베딩에 쓰는 사전학습 텍스트 인코더(CLIP)의 비용은 계산에 없음.
 - 메모 (계속): 11번과 달리 합성 + 증류의 전체 시간을 보고함. 두 논문의 "배수"는 분모(합성만 대 전체)와 하드웨어가 달라 직접 비교할 수 없음.
 

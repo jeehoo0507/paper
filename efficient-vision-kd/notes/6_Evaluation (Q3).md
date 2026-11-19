@@ -1,6 +1,6 @@
 # 6_Evaluation (Q3) 메모
 
-> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 이후 원문 검수에서 고쳐야 할 곳 20건이 나왔고 아직 반영하지 않았다. 수치를 쓰기 전에 [`audit/README.md`](audit/README.md)의 해당 줄을 먼저 본다.
+> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 원문 검수에서 나온 정정은 해당 논문의 **정정** 줄에 반영했다(2026-11-19). "직접 대조"는 이번에 원문을 다시 확인한 것, "검수 보고서 근거"는 [`audit/`](audit/README.md)의 원문 대조 결과를 옮긴 것이다. 정정이 없는 논문도 사람이 원문과 다시 대조하지는 않았다.
 
 Evaluation (Q3): 평가 방식 (Q3) 참고  
 논문 목록과 PDF: [`../Related Work/Efficient KD papers/6_Evaluation (Q3)/`](<../Related Work/Efficient KD papers/6_Evaluation (Q3)>)  
@@ -27,6 +27,7 @@ Evaluation (Q3): 평가 방식 (Q3) 참고
 - 설정: ImageNet ResNet-50/34/18 조합 (자기 증류 포함), CIFAR-10/100 ResNet-56 자기 증류, 긴 꼬리판 CIFAR-10/100-LT·ImageNet-LT, iNaturalist. 표 형태 데이터(UCI Adult, 랜덤 포레스트)도 포함.
 - 평균 정확도 외 평가: 있음. 클래스별 정확도를 정렬해 **하위 k개 클래스 평균** (k = 1, 10, 100)을 보고. Adult에서는 속성으로 나눈 하위집단 정확도.
 - 위치: Fig. 1 (p. 2), Table 1 (p. 4), Fig. 2·Table 2·3 (p. 5), Table 4 (p. 7), Table 5·6 (p. 10)
+- **정정 (검수 보고서 근거)**: CIFAR-100-LT의 −1.46%p는 표끼리 라벨이 다름. 표 3은 worst-1로 쓰고, 표 5는 worst-1이 양쪽 모두 0%, worst-10이 2.33 → 0.87%. 표 5의 비교를 쓰거나 충돌을 같이 적을 것. [표 3](https://arxiv.org/pdf/2106.10494v2#page=6) · [표 5](https://arxiv.org/pdf/2106.10494v2#page=10)
 - 메모:
   - 효율화 이전의 Full KD부터 하위 클래스가 손해를 볼 수 있다는 직접 근거. 우리 실험에서 Full KD 대 CE의 하위 클래스 지표를 먼저 기록해야 하는 이유.
   - 균형 데이터·클래스 수가 적은 경우에는 손해가 안 보였다는 점도 같이 적어야 함. 현상이 데이터에 따라 다름.
@@ -41,6 +42,7 @@ Evaluation (Q3): 평가 방식 (Q3) 참고
 - 설정: Waterbirds, CelebA (ResNet-50 → ResNet-18), CivilComments-WILDS, MultiNLI (BERT → DistilBERT). teacher는 최저 그룹 정확도가 높은 모델 (Waterbirds 91.4%).
 - 평균 정확도 외 평가: 있음. **최저 그룹 정확도**와 그룹별 정확도 (Waterbirds 4그룹, CelebA 4그룹). 표에 "그룹 주석 사용 여부" 열을 둠.
 - 위치: Fig. 1 (p. 2), Table 1 (p. 7), Table 2·Fig. 5 (p. 8), Table 3–5 (p. 11–12)
+- **정정 (검수 보고서 근거)**: 제안 student의 학습 손실에 그룹 라벨을 직접 안 쓰는 것과, Group DRO teacher 및 그룹 라벨을 쓴 검증·튜닝·테스트는 함께 성립함. 논문은 테스트 WGA, 우리는 검증 WGA라 나란히 놓지 않음. [§5.4·표 1](https://arxiv.org/pdf/2310.18590v2#page=7)
 - 메모:
   - 여기서 teacher는 이미 편향이 줄어든 모델임 (최저 그룹 91.4%). 우리 실험의 teacher는 일반 미세조정 모델이라 조건이 다름. "Waterbirds에서 KD가 최저 그룹을 크게 올린다"는 이 논문의 수치를 그대로 기대하면 안 됨.
   - KD 손실 비중이 클수록(λ=1) 최저 그룹이 좋아진다는 결과는 teacher가 편향이 적을 때의 이야기.
@@ -54,6 +56,7 @@ Evaluation (Q3): 평가 방식 (Q3) 참고
 - 설정: Waterbirds, CelebA, CivilComments, MultiNLI. teacher는 편향을 줄인 모델. 일부 검증 샘플의 그룹 주석만 사용.
 - 평균 정확도 외 평가: 있음. **최저 그룹 정확도**, 그룹별 정확도 (Table 4·5). 표에 그룹 주석 사용 범위(전체 / 소수 검증 샘플 / 없음)를 표시.
 - 위치: Fig. 1 (p. 2), Table 1 (p. 6), Table 2–5 (p. 7), Table 6 (p. 8)
+- **정정 (검수 보고서 근거)**: 02번과 같은 조건 구분 적용: Group DRO teacher 기준 수치이고 테스트 WGA임. 우리 수치(일반 미세조정 teacher, 검증 WGA)와 나란히 놓지 않음. [표 1](https://arxiv.org/pdf/2302.11187v1#page=6)
 - 메모: 02번과 같은 벤치마크·같은 기준선 수치를 공유함 (KD, SimKD 수치가 동일). 3_Reuse 12번 SimKD(분류기 재사용)가 그룹 지표에서는 약하다는 점이 여기서 드러남.
 
 ### 04. What is Left After Distillation? ([arXiv: 2410.08407](https://arxiv.org/abs/2410.08407))
@@ -79,6 +82,7 @@ Evaluation (Q3): 평가 방식 (Q3) 참고
 - 설정: OpenCLIP ViT-L/14 등 CLIP 6종, 가짜 상관 벤치마크 8종 (Waterbirds, UrbanCars, CelebA, MetaShifts, ImageNet-9, OxfordPets, Caltech101, ImageNet-D). 제로샷 추론, 학습 없음.
 - 평균 정확도 외 평가: 있음. **최저 그룹 정확도**의 압축 전 대비 상대 변화, "나빠진 / 좋아진 데이터셋 수".
 - 위치: Table 1 (p. 6), Fig. 3·Table 2 (p. 7), Table 3 (p. 12), Table 7·8 (p. 17)
+- **정정 (검수 보고서 근거)**: SIM 부호 판정은 0–0 동률을 맞은 것으로 세면 7/8(p=.035), 빼면 6/7(p=.063). 절대 WGA 표와 상대 변화 표가 일부 맞지 않으므로 섞어서 재계산하지 않음. 지연: MARS CPU 분할 55.2 ms/장, GPU 분할 약 27.5 ms/장, 미압축 15.7 ms/장. [표 1–2](https://arxiv.org/pdf/2609.39704v1#page=6) · [부록 표 5](https://arxiv.org/pdf/2609.39704v1#page=17)
 - 메모:
   - 개입 시점이 다름. 이 논문은 **추론 때** 모델 입력의 토큰을 줄이고, MaskedKD는 **학습 때** teacher 입력의 토큰만 줄임. 다만 "어떤 토큰을 남기는지가 그룹별 결과를 뒤집는다"는 결론은 우리 Waterbirds 결과(같은 15%에서 선택 규칙에 따라 최저 그룹 38.6% 대 62.2%)와 같은 방향.
   - Waterbirds 하나만 보면 결론이 뒤집힐 수 있다는 경고. 그룹 데이터셋을 둘 이상 써야 하는 이유.
@@ -105,6 +109,7 @@ Evaluation (Q3): 평가 방식 (Q3) 참고
 - 설정: CIFAR-10/100, TinyImageNet, ImageNet. ResNet 계열, 3 seed. 남긴 비율 0.3 / 0.5 / 0.8.
 - 평균 정확도 외 평가: 있음. **최악 클래스 정확도**를 평균과 나란히 보고.
 - 위치: Table 1 (p. 16), Table 2 (p. 22)
+- **정정 (검수 보고서 근거)**: 최악 클래스 외에 Waterbirds 최저 그룹 정확도도 평가함 (Fig. 9, 그룹을 고려한 선택, ResNet-50). 데이터 프루닝의 그룹 강건성 선행 근거로 쓸 수 있음. [Fig. 9](https://arxiv.org/pdf/2404.05579v4#page=10)
 - 메모: Skip(데이터)에서 "예산을 줄이면 최악 클래스가 먼저 무너진다"의 KD 없는 선행 근거. 여기서 단위는 **클래스**이고 클래스 안의 속성 그룹이 아님. 무작위 선택이 점수 기반보다 최악 클래스에서 안전하다는 점은 2_Skip 02번과 일관됨.
 
 ### 08. Impact of Coreset Selection on Spurious Correlations ([arXiv: 2507.11690](https://arxiv.org/abs/2507.11690))

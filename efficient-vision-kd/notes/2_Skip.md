@@ -1,6 +1,6 @@
 # 2_Skip 메모
 
-> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 이후 원문 검수에서 고쳐야 할 곳 20건이 나왔고 아직 반영하지 않았다. 수치를 쓰기 전에 [`audit/README.md`](audit/README.md)의 해당 줄을 먼저 본다.
+> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 원문 검수에서 나온 정정은 해당 논문의 **정정** 줄에 반영했다(2026-11-19). "직접 대조"는 이번에 원문을 다시 확인한 것, "검수 보고서 근거"는 [`audit/`](audit/README.md)의 원문 대조 결과를 옮긴 것이다. 정정이 없는 논문도 사람이 원문과 다시 대조하지는 않았다.
 
 Skip: 샘플, teacher 호출, 학습 구간을 건너뜀  
 논문 목록과 PDF: [`../Related Work/Efficient KD papers/2_Skip/`](<../Related Work/Efficient KD papers/2_Skip>)  
@@ -117,6 +117,7 @@ Skip: 샘플, teacher 호출, 학습 구간을 건너뜀
 - 설정: CIFAR-100, 240 epoch, batch 64. resnet32×4 → ShuffleV2 등 구조가 다른 쌍과 WRN-40-2 → WRN-16-2 등 비슷한 쌍. ImageNet ResNet-18 → ShuffleV2×0.5, batch 256. Tiny-ImageNet. 4회 평균.
 - 평균 정확도 외 평가: 클래스별 분석 있음. 불확실성 선택이 어려운 클래스에서 샘플을 더 고르는지와 클래스별 정확도를 봄 (Fig. 5). 분포 이동·그룹 평가는 없음.
 - 위치: Fig. 1 (p. 1), 식 2–3·Fig. 2 (p. 3), Table 1 (p. 5), Table 2–4 (p. 6), Fig. 5 (p. 8), 부록 A (p. 11)
+- **정정 (2026-11-19 직접 대조)**: 식 11은 E = k·F_t + (N+k)·F_s + k·B_s. teacher forward뿐 아니라 student backward도 N회 → k회로 줄고, student forward는 N+k회로 늘어남. 그래서 "teacher 비중이 절감 상한"은 이 방법에 맞지 않음. 하드웨어: CIFAR-100은 TITAN X Pascal 1장, Tiny-ImageNet 4장, ImageNet 8장. [식 11](https://arxiv.org/pdf/2012.09413v1#page=5) · [부록 C.3](https://arxiv.org/pdf/2012.09413v1#page=11)
 - 메모:
   - 비용을 (teacher 호출 수 × teacher forward) + (student forward 수 × student forward) + (student backward 수 × student backward)로 나눠 쓴 식이 우리 비용식과 같은 구조임. 선행 사례로 인용.
   - teacher/student 연산비가 작으면 절감이 사라진다는 관찰은 "teacher 비중이 절감의 상한"이라는 주장과 직접 연결됨.
@@ -162,6 +163,7 @@ Skip: 샘플, teacher 호출, 학습 구간을 건너뜀
 - 설정: ImageNet ResNet-18·MobileNetV2 → ResNet-50, MobileNetV2 → ViT-S/16. CIFAR-100 DenseNet-40 → ResNet-18·DenseNet-100. CIFAR-10 MobileNetV2 → ResNet-50. 최적화기 SGD·AdamW·Muon. 총 epoch은 확인 안 함.
 - 평균 정확도 외 평가: 다른 과제의 지표 (검출 AP50, 생성 FID). 분류에서의 그룹·분포 이동 평가는 없음.
 - 위치: Table 1 (p. 8), Table 2·Fig. 2 (p. 9), Table 3·Fig. 3 (p. 10), 한계 (p. 14)
+- **정정 (2026-11-19 직접 대조)**: 초록의 확산 생성 2.5배와 표 2의 값(FID 60 도달 16K → 6K steps, 2.67배)이 다름. 수치는 표 2에 고정해 인용. 분류의 "최대 4.8배"도 표 1·3의 값은 4.75배(ImageNet, ResNet-18 → ResNet-50, Muon, top-1 65% 도달 epoch 비율). [표 1](https://arxiv.org/pdf/2604.15451v2#page=8) · [표 2](https://arxiv.org/pdf/2604.15451v2#page=9)
 - 메모:
   - 4.8배는 epoch 기준이라 GPU 시간 배율로 옮기면 안 됨. KD 구간에서는 epoch당 시간에 teacher forward가 더해짐.
   - "목표 도달 시간"과 "최종 정확도"를 구분해야 하는 대표 사례 (5_Measurement 01번과 대비).
@@ -181,6 +183,7 @@ Skip: 샘플, teacher 호출, 학습 구간을 건너뜀
 - 설정: RegNetY-16GF (82.9%) → DearKD-Ti/S/B (DeiT 기반), ImageNet-1k, 300 epoch (1단계 250) 또는 1000 epoch (1단계 800), batch 2048, DeiT 증강.
 - 평균 정확도 외 평가: 다운스트림 전이 (Table 4), 실제 이미지 없이 합성 이미지로만 학습하는 설정. 그룹·분포 이동 평가는 없음.
 - 위치: 5.1절·Table 1·2 (p. 6), Table 3 (p. 7), Table 4 (p. 8), Table 7 (p. 12)
+- **정정 (검수 보고서 근거)**: 후반을 완전한 teacher-off 구간으로 세기 어려움. 본문은 2단계를 CE로 설명하지만, 부록 C의 300 epoch 레시피는 후반 50 epoch에 특징 KD를 끄고 hard-label KD 가중치를 0까지 점진적으로 줄임. teacher 호출 절감은 레시피별로 따로 확인. [식 6–7](https://arxiv.org/pdf/2204.12997v2#page=4) · [부록 C](https://arxiv.org/pdf/2204.12997v2#page=12)
 - 메모:
   - 형태는 "초반만 KD"지만 동기는 비용이 아니라 데이터 효율과 정확도임. 비용 절감의 근거로 인용하면 안 됨.
   - 초반 KD 후 CE만으로 학습하는 절차의 원형은 ESKD (4_Substitute 02번, On the Efficacy of KD).

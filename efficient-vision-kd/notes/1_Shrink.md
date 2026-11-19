@@ -2,7 +2,7 @@
 
 > **팀원 최신본 대조 (2026-11-19)**: [yohan0825/paper의 1_Shrink.md](https://github.com/yohan0825/paper/blob/main/efficient-vision-kd/notes/1_Shrink.md) 최신본(011e5b2)과 비교함. 이 파일이 그 초안에 수치와 측정 항목을 더한 판이라, 최신본에만 있는 사실은 없음.
 >
-> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 이후 원문 검수에서 고쳐야 할 곳 20건이 나왔고 아직 반영하지 않았다. 수치를 쓰기 전에 [`audit/README.md`](audit/README.md)의 해당 줄을 먼저 본다.
+> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 원문 검수에서 나온 정정은 해당 논문의 **정정** 줄에 반영했다(2026-11-19). "직접 대조"는 이번에 원문을 다시 확인한 것, "검수 보고서 근거"는 [`audit/`](audit/README.md)의 원문 대조 결과를 옮긴 것이다. 정정이 없는 논문도 사람이 원문과 다시 대조하지는 않았다.
 
 Shrink: 한 스텝 비용을 줄임  
 논문 목록과 PDF: [`../Related Work/Efficient KD papers/1_Shrink/`](<../Related Work/Efficient KD papers/1_Shrink>)  
@@ -59,6 +59,7 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: 의미 영역 분할은 ADE20K, 인스턴스 검색은 Oxford·Paris 데이터셋에서 평가.
 - 평균 정확도 외 평가: 의미 영역 분할: 선형 영역 분할, 인코더 전용 마스크 트랜스포머(EOMT), 다중 스케일(MS) 추론의 세 가지 프로토콜 사용. 인스턴스 검색: 백본에서 이미지별 전역 임베딩을 추출하고, 질의 이미지와 데이터베이스 이미지의 유사도순으로 검색 결과를 정렬해 평균 정밀도(mAP)를 계산.
 - 위치: 4.3절의 의미 영역 분할·인스턴스 검색 평가.
+- **정정 (검수 보고서 근거)**: 시간 절감의 분모가 원문 안에서도 다름. 표 1 캡션은 FLOPs와 시간을 teacher 오버헤드 절감으로, §4.2는 ViT-Tiny의 22.5%를 총 학습 시간 절감으로 부름. 어느 범위인지 확정해 인용하지 않는다. [표 1·§4.2](https://arxiv.org/pdf/2606.19483v2#page=6)
 - 메모: 효율 감소분은 현재 목표 층 뒤의 teacher 연산 생략에서 발생. CKA·투영층을 포함한 전체 시간과 teacher 순전파 FLOPs를 구분해 비교.
 
 ### 04. Asymmetric Masked Distillation (AMD) ([arXiv: 2311.03149](https://arxiv.org/abs/2311.03149))
@@ -109,6 +110,7 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: CIFAR-100·ImageNet, 여러 CNN 조합. 이진 신경망 증류도 실험.
 - 평균 정확도 외 평가: CIFAR-100 특징을 고정한 STL-10·Tiny-ImageNet 선형 프로빙.
 - 위치: 손실 정의, 표현 전이 Table 4. [원문](https://arxiv.org/abs/2112.00459)
+- **정정 (검수 보고서 근거)**: STL-10 72.7%, Tiny-ImageNet 36.0% 선형 평가는 v2 표 4에만 있음. 저장소 PDF(v3)에는 그 표가 없으므로 인용 시 v2를 명시. [ITRD v2 표 4](https://arxiv.org/pdf/2112.00459v2#page=13)
 - 메모: 연산을 비교할 때 배치 크기와 특징 차원을 고정해야 함. 상관행렬·Gram 행렬 계산과 특징 투영층도 KD 오버헤드에 포함.
 
 ### 08. Understanding the Role of the Projector in KD ([arXiv: 2303.11098](https://arxiv.org/abs/2303.11098))
@@ -134,6 +136,7 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: CIFAR-100·ImageNet. ImageNet ResNet50→ResNet18. NLP GLUE도 포함.
 - 평균 정확도 외 평가: teacher·student KL divergence, 예측 일치율(Agree), 논문 정의의 PL·Gap.
 - 위치: Figure 1, Table 3, 일관성 분석. [저자 코드](https://github.com/1170300319/PESF-KD)
+- **정정 (검수 보고서 근거)**: 링크된 arXiv 판은 prediction KL, CKA, sharpness GAP를 분석함. 비용·평가 칸을 이 판 기준으로 다시 볼 것. [PESF-KD §4](https://arxiv.org/pdf/2205.15308v1#page=6)
 - 메모: FT-KD 대비 비용 절감 사례. 같은 표의 vanilla KD 0.46과 PESF-KD 0.47을 근거로 vanilla KD보다 빠르다고 쓰지 않음.
 
 ### 10. Knowledge Distillation from A Stronger Teacher (DIST) ([원문](https://arxiv.org/abs/2205.10536))
@@ -147,6 +150,7 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: CIFAR-100·ImageNet, 강한 teacher와 다양한 student. 객체 탐지·분할에도 적용.
 - 평균 정확도 외 평가: 탐지 AP, Cityscapes mIoU. 외부 연구는 ImageNet-C·R·Sketch·A·Stylized-ImageNet 평가.
 - 위치: §1·3, 탐지·분할 평가. 외부 강건성 Table 3. [공식 코드](https://github.com/hunto/DIST_KD)
+- **정정 (검수 보고서 근거)**: 학습 처리량 표가 있음: 8×V100, ResNet-34 → 18에서 DIST 14.19, vanilla KD 14.28 batches/s. "비용 보고 없음"이 아님. [DIST 표 11](https://arxiv.org/pdf/2205.10536v3#page=14)
 - 메모: 강한 teacher를 사용하는 비용과 DIST 손실 자체의 비용을 분리. 외부 강건성 수치는 CLIP ViT-L/14→ViT-B/16이라는 해당 설정에 한정.
 
 ## 축 분류 메모

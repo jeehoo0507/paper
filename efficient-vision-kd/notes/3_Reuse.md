@@ -1,8 +1,8 @@
 # 3_Reuse 메모
 
-> **팀원 정리 반영**: 01, 02, 04, 05, 06, 09번에 [NGC1788/Reuse](https://github.com/NGC1788/Reuse)의 내용을 덧붙였음 (FerKD와 07, 08, 10–14번은 그 정리에 없음). 05번에 수치 충돌 1건.
+> **팀원 정리 반영**: 01, 02, 04, 05, 06, 09번에 [NGC1788/Reuse](https://github.com/NGC1788/Reuse)의 내용을 덧붙였음 (FerKD와 07, 08, 10–14번은 그 정리에 없음). 05번의 수치 충돌은 단위 차이로 정리했음 (정정 줄).
 >
-> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 이후 원문 검수에서 고쳐야 할 곳 20건이 나왔고 아직 반영하지 않았다. 수치를 쓰기 전에 [`audit/README.md`](audit/README.md)의 해당 줄을 먼저 본다.
+> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 원문 검수에서 나온 정정은 해당 논문의 **정정** 줄에 반영했다(2026-11-19). "직접 대조"는 이번에 원문을 다시 확인한 것, "검수 보고서 근거"는 [`audit/`](audit/README.md)의 원문 대조 결과를 옮긴 것이다. 정정이 없는 논문도 사람이 원문과 다시 대조하지는 않았다.
 
 Reuse: 한 번 만들고 재사용  
 논문 목록과 PDF: [`../Related Work/Efficient KD papers/3_Reuse/`](<../Related Work/Efficient KD papers/3_Reuse>)  
@@ -37,6 +37,7 @@ Reuse: 한 번 만들고 재사용
   - 비슷한 성능의 온라인 증류(FunMatch) 대비 3~5배, 같은 설정의 MEAL V2 대비 2~4배 빠르다고 주장. 이 배수는 label 생성 비용을 뺀 학습 단계만의 비교.
   - ReLabel 대비 정확도: ResNet-50 78.9 → 79.8%(+0.9%p), ResNet-101 80.7 → 81.7%(+1.0%p). 학습 시간은 ReLabel(+0.5%)보다 약간 짧음. 생성 비용이 크게 다른 두 방법을 학습 시간만으로 비교한 것.
   - 논문은 label 생성 단계를 "느리다"고만 적고 GPU 시간은 밝히지 않음.
+- **정정 (검수 보고서 근거)**: 79.8 / 80.1 / 80.9%의 조건이 다름. arXiv v1 표 3은 79.8%. ECCV판 표 3은 warmup·color jitter 제외 79.8%, 포함 80.1%를 둘 다 싣고, §4.1은 CutMix 적용 80.9%를 따로 보고. Dataset Reinforcement 표 9에도 이미지당 500 crop에서 80.1%. [arXiv v1 표 3](https://www.alphaxiv.org/pdf/2112.01528v1?page=6) · [ECCV 표 3](https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136840663.pdf#page=10)
 - 메모:
   - 학습 시간 절감은 실측 배수로 보고했지만 일회성 생성 시간은 숫자가 없음. "일회성 비용을 숫자로 보고했나" 집계에서는 저장 용량만 Y.
   - 저장한 crop 수와 epoch 수의 관계(한 crop을 몇 번 재사용하는가)는 본문에서 확인 안 함. 우리 실험의 "뷰 수" 손잡이에 해당.
@@ -91,6 +92,7 @@ Reuse: 한 번 만들고 재사용
   - "여러 student에 재사용할 수 있다"를 동기로 들지만 실제로 몇 개 student에 썼는지, 그 수로 나눈 비용은 나오지 않음.
   - 최고 결과와 비용 계산에 쓴 Florence teacher는 공개되지 않음.
   - 증강을 seed로 재현하므로 저장할 때와 학습할 때 데이터 로더, 증강 구현, 라이브러리 버전이 같아야 함.
+- **정정 (검수 보고서 근거)**: 29.8%는 캐시 생성 + student 90 epoch 사전학습의 비교임. teacher 준비와 student 후속 미세조정 비용은 범위 밖. 캐싱 설계의 예로 든 CutMix는 실제 사전학습에서 Mixup과 함께 껐음. [§5.1·부록 B](https://www.alphaxiv.org/pdf/2207.10666v1?page=20)
 - 메모: 준비 비용과 반복 비용을 같은 단위(GPU일)로 보고해 "학생을 한 번만 학습해도 본전인가"를 계산할 수 있는 사례. 여기서는 한 번만 학습해도 29.8% 절감. epoch마다 다른 증강의 logit을 저장하므로 저장 용량이 epoch 수에 비례함 (FKD의 "crop 수"와 같은 손잡이).
 
 ### 05. Dataset Reinforcement (Reinforce Data, Multiply Impact) ([arXiv: 2303.08983](https://arxiv.org/abs/2303.08983))
@@ -111,7 +113,8 @@ Reuse: 한 번 만들고 재사용
   - 표준 ImageNet 학습 대비 학습 시간: MobileNetV3-Large 1.12배, ResNet-50 1.01배, Swin-T 0.99배.
   - 표준 학습 대비 ResNet-50: IN val +1.7, V2 +3.5, IN-R +10.0%p, ECE 9.9% 감소.
   - 이득의 분모가 온라인 KD가 아니라 teacher 없는 표준 학습임. 효율화라기보다 일회성 비용으로 정확도와 강건성을 사서 배포하는 방식으로 읽는 게 맞음.
-  - **위 메모와 충돌**: 이 정리는 생성 2205 GPU시간을 ResNet-50 300 epoch 학습(206 GPU시간)의 약 10.7배로 계산함. 위 메모는 "ResNet-50 300 epoch 학습과 비슷한 규모"라고 적음. 206 GPU시간과 "비슷한 규모"가 각각 원문 어디에서 나왔는지 확인 필요 (부록 F, p. 6). 재사용 횟수 N 논의의 숫자가 이것으로 바뀜.
+  - 생성 비용 표현(10.7배 대 "비슷한 규모")은 단위 차이로 정리됨. 아래 **정정** 줄 참고.
+- **정정 (2026-11-19 직접 대조)**: 생성 비용의 두 표현은 둘 다 원문에 있고 단위가 다름. §3(p. 6): "2205 GPUh, 64×A100" vs "ResNet-50 300 epoch, 8×A100, 206 GPUh" → GPU시간 기준 약 10.7배. 부록 F(p. 25): "2080분, 64×A100 … ResNet-50 300 epoch 8×A100 학습과 비슷" → 경과 시간 기준. 위 메모의 "비슷한 규모"는 경과 시간 기준이라 GPU시간으로 인용하면 틀림. 이 값만으로 재사용 본전 횟수를 일반화하지 않음. 저장: 원본 61.5 GB, GZIP 37.5 GB (표 9). [§3](https://www.alphaxiv.org/pdf/2303.08983v3?page=6) · [부록 F](https://www.alphaxiv.org/pdf/2303.08983v3?page=25)
 - 메모:
   - 생성 비용이 student 1회 학습과 비슷한 규모라고 스스로 밝힘. 즉 한 번만 쓰면 이득이 없고 여러 번 써야 본전 → "재사용 횟수 N" 논의의 근거.
   - 생성 비용은 "목표 epoch 수의 약 1/3만큼의 표본에 대한 teacher 추론"이라고 요약 (부록 F). 우리 실험의 "뷰 수 대 정확도" 가설과 직접 대응.
@@ -143,6 +146,7 @@ Reuse: 한 번 만들고 재사용
 - 설정: ViT teacher (Base·Large, patch 16·32) → 작은 ViT student, CIFAR-100, 이미지 32·64, 200 epoch.
 - 평균 정확도 외 평가: 없음
 - 위치: 초록 (p. 1), Fig. 2·3 (p. 3), Table 2·3·Fig. 4 (p. 4)
+- **정정 (검수 보고서 근거)**: 9배 메모리·8배 학습 시간 비교(Fig. 4)는 base student의 온라인 KD와 large student의 임베딩 KD를 비교한 것이라 student 크기까지 다름. 같은 base student·32px의 자원 비교는 표 2 수치를 쓰고 정확도 손실도 같이 적을 것. [Fig. 4·표 2](https://www.alphaxiv.org/pdf/2404.06170v1?page=4)
 - 메모: 5쪽짜리 예비 연구. 표본별 출력이 아니라 클래스 평균을 저장하므로 Reuse의 극단(뷰 0개, 클래스당 1개)에 해당. 정확도 손실 2%p가 그 대가.
 
 ### 08. 지식 저장 증류 (랩실, 검출) ([DBpia](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE12055100))

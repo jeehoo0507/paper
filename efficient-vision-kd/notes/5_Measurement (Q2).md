@@ -1,6 +1,6 @@
 # 5_Measurement (Q2) 메모
 
-> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 이후 원문 검수에서 고쳐야 할 곳 20건이 나왔고 아직 반영하지 않았다. 수치를 쓰기 전에 [`audit/README.md`](audit/README.md)의 해당 줄을 먼저 본다.
+> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 원문 검수에서 나온 정정은 해당 논문의 **정정** 줄에 반영했다(2026-11-19). "직접 대조"는 이번에 원문을 다시 확인한 것, "검수 보고서 근거"는 [`audit/`](audit/README.md)의 원문 대조 결과를 옮긴 것이다. 정정이 없는 논문도 사람이 원문과 다시 대조하지는 않았다.
 
 Measurement (Q2): 측정 방식 (Q2) 참고  
 논문 목록과 PDF: [`../Related Work/Efficient KD papers/5_Measurement (Q2)/`](<../Related Work/Efficient KD papers/5_Measurement (Q2)>)  
@@ -74,6 +74,7 @@ Measurement (Q2): 측정 방식 (Q2) 참고
 - 설정: 언어 모델 사전학습 (비전 아님). teacher와 student의 크기·학습 토큰 수를 넓게 바꿈.
 - 평균 정확도 외 평가: 없음 (교차 엔트로피)
 - 위치: 초록 (p. 1), 식 8·9·Table 2 (p. 6)
+- **정정 (검수 보고서 근거)**: 회계 계수는 [0,1] 범위이고 네 시나리오가 0과 1 끝점을 씀. 식 9에 캐시 저장·입출력 비용은 없음. teacher 출력 재사용 시나리오는 그 비용을 상각한 경우. 주 목표는 validation cross-entropy지만 부록에서 ARC·MMLU 등도 평가. [식 9·표 2](https://arxiv.org/pdf/2502.08606v2#page=6) · [부록 E.1](https://arxiv.org/pdf/2502.08606v2#page=47)
 - 메모:
   - 우리 비용식의 "일회성 비용 ÷ 재사용 횟수" 항과 "무엇을 세는가에 따른 네 범위"의 가장 직접적인 선행 사례. 단 도메인이 언어 모델이라 수치는 옮길 수 없고 회계 원리만 인용.
   - 식 9에서 student 학습을 forward의 3배로 근사함 (forward + backward). 우리 FLOPs 측정과 대응시킬 때 참고.
@@ -105,6 +106,7 @@ Measurement (Q2): 측정 방식 (Q2) 참고
 - 설정: CIFAR-10, Tiny ImageNet, ImageNet-1K 등 4종, ResNet-18 (일부 ResNet-50 전이), 200 epoch 기준 레시피. KD 없음.
 - 평균 정확도 외 평가: 없음
 - 위치: 초록 (p. 1), Fig. 5·5절 (p. 9)
+- **정정 (검수 보고서 근거)**: ImageNet-1K 기본 레시피는 90 epoch (200 epoch는 작은 데이터셋 기본값). 비용은 선택 시간을 직접 재고 학습+평가 시간을 프로브로 추정한 값. "같은 비용에서 전체 데이터 단축 학습이 이겼다"는 실험한 비교점에 한정. [표 4](https://arxiv.org/pdf/2609.22894v2#page=14) · [부록 I](https://arxiv.org/pdf/2609.22894v2#page=20)
 - 메모:
   - 우리 실험의 "자명한 기준선(전체 데이터를 짧게, 무작위 부분집합)을 같은 비용 축에 놓는다"는 설계의 직접 근거. KD 설정에서 같은 결론이 나오는지가 우리 질문.
   - 선택 비용의 상각 분석(Fig. 5a)은 Reuse의 재사용 횟수 분석과 같은 틀.
@@ -122,6 +124,7 @@ Measurement (Q2): 측정 방식 (Q2) 참고
 - 설정: PSPNet ResNet-101 → PSPNet ResNet-18, Cityscapes·ADE20K. 40k~160k 반복, 최대 300 GPU시간.
 - 평균 정확도 외 평가: 해당 없음 (mIoU)
 - 위치: 초록 (p. 1), Table 1·Fig. 1·4.2절 (p. 3)
+- **정정 (검수 보고서 근거)**: 40k iteration / 30 GPU시간 비교와 장기 비교는 다른 프로토콜. 짧은 비교는 CIRKD 설정이고 teacher는 DeepLabV3-R101. 2×A100은 장기 그래프 기준. 반지도 확장은 별도로 320 GPU시간까지 감. [§4.2–4.4](https://arxiv.org/pdf/2604.25530v2#page=3)
 - 메모: "반복 수가 같다고 예산이 같은 것이 아니다"의 가장 분명한 사례. 스텝당 비용이 다른 방법들을 epoch 기준으로 비교하면 안 된다는 근거로 3절에 인용. 분류가 아니라 분할이라는 점은 명시.
 
 ## 정리 메모
