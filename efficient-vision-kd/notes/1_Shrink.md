@@ -2,7 +2,7 @@
 
 > **팀원 최신본 대조 (2026-11-19)**: [yohan0825/paper의 1_Shrink.md](https://github.com/yohan0825/paper/blob/main/efficient-vision-kd/notes/1_Shrink.md) 최신본(011e5b2)과 비교함. 이 파일이 그 초안에 수치와 측정 항목을 더한 판이라, 최신본에만 있는 사실은 없음.
 >
-> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 원문 검수에서 나온 정정은 해당 논문의 **정정** 줄에 반영했다(2026-11-19). "직접 대조"는 이번에 원문을 다시 확인한 것, "검수 보고서 근거"는 [`audit/`](audit/README.md)의 원문 대조 결과를 옮긴 것이다. 정정이 없는 논문도 사람이 원문과 다시 대조하지는 않았다.
+> **원문 대조 완료 (2026-11-19).** 논문마다 **원문 대조** 블록이 있다. Opus 5.5 서브에이전트 8개가 저장소 PDF(일부는 arXiv·학회판을 받아)와 메모의 수치·조건·판정을 한 줄씩 대조한 결과다. 블록이 위 서술과 다르면 블록이 맞다. 대조 보고서 원본: [`audit/verify-2026-11-19/`](audit/verify-2026-11-19). 사람이 다시 확인하지는 않았다.
 
 Shrink: 한 스텝 비용을 줄임  
 논문 목록과 PDF: [`../Related Work/Efficient KD papers/1_Shrink/`](<../Related Work/Efficient KD papers/1_Shrink>)  
@@ -35,6 +35,21 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: ImageNet-1k, DeiT 레시피. student는 처음부터 학습 (Tiny는 crop + flip만 사용). teacher는 DeiT·DeiT3·CaiT·CLIP·MAE. 손실 CE + λ·KD, λ=1, T=1. 3 seed 평균. 224px, 16×16 패치 196개 (DeiT3-H, MAE-ViT-H는 14×14 패치 256개).
 - 평균 정확도 외 평가: 선형 평가 정확도 (DINO 적용 Table 4, 선형 분류기만 증류 Table 8), 검출 AP·분할 mIoU (Table 12). 그룹별·분포 이동·손상 강건성 평가는 없음.
 - 위치: Table 2 (정확도·FLOPs·처리량), Table 3·4 (오디오, DINO), Table 9 (증강), Table 10 (FLOPs 분석), Table 11 (메모리), Table 12 (검출·분할), 부록 A (설정)
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 12건 / 수정 9건 / 추가 5건 / 확인 불가 0건. 본 판본: arXiv 2302.10494v4 (PDF 첫 쪽 표기, 27 Sep 2024). 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [수정] GPU 메모리(DeiT-B → DeiT-S, batch 128): teacher 6499 → 3412 MB, 합계 12925 → 9838 MB (−24%). 배치 크기나 오프로딩에 따라 감소율이 달라진다고 원문이 밝힘. (Table 11, p.27) ← 메모: GPU 메모리 teacher 6499 → 3412 MB, 합계 12925 → 9838 MB (−24%)
+  - [수정] teacher forward 1회 GFLOPs: DeiT-B 17.5 → 8.6 (50% 유지). 임베딩·잔차·정규화 연산은 뺀 근사치. (Table 10, p.26) ← 메모: Table 10의 17.5 → 8.6 GFLOPs(DeiT-B). "재대조 안 함"
+  - [수정] 25% 유지: DeiT3-S teacher 75.1 → 74.8 (−0.3), DeiT3-B teacher 74.4 → 74.7 (+0.3). teacher마다 기준값이 다름. (Table 2, p.8) ← 메모: 25% 유지는 teacher에 따라 74.7~74.8
+  - [수정] [구조] 저자가 "Potential negative societal impact" 문단에서 attention 기반 선택이 데이터의 가짜 상관을 강화할 수 있다고 적음. 실험은 없음. (§6, p.14) ← 메모: [구조] 논문 스스로 한계로 적음: 가짜 상관 강화 가능 (6절)
+  - [수정] 옮겨 간 비용: student attention의 head 평균만 N·H FLOPs이며 ViT-G/14 기준 샘플당 4.1 kFLOPs 미만. top-k 정렬·gather 비용은 따로 세지 않음. (§3.2, p.6) ← 메모: 옮겨 간 비용: attention 평균·정렬·선택이 샘플당 4.1 kFLOPs 미만
+  - [수정] student → teacher 순서 의존이 생김. 여러 GPU를 쓸 때는 micro-batch 파이프라인으로 유휴 시간을 메울 수 있다고 함. 측정한 시간은 없고 그림(Fig. 8)만 있음. (부록 F, p.23) ← 메모: 병렬화에 micro-batching 필요 (부록 F)
+  - [수정] 하드웨어: 처리량(img/s) 측정만 RTX A6000 1장, FP32, batch 128. 학습에 쓴 GPU는 따로 밝히지 않음. (부록 A, p.18) ← 메모: 하드웨어 RTX A6000 1장, FP32, batch 128 (부록 A)
+  - [수정] student는 DeiT 레시피로 처음부터 학습. 단 ViT-L·H student는 MAE 체크포인트에서 50 epoch 미세조정. (§4.1, p.7) ← 메모: student는 처음부터 학습
+  - [수정] 3 seed 평균. CLIP teacher와 large·huge student 실험은 제외(단일 실행). 오디오(ESC-50)는 5 seed 평균. (p.7, p.18) ← 메모: 3 seed 평균
+  - [추가] Table 2에 ConViT-B teacher(DeiT-Ti student, 73.8 → 74.2, 8543 → 5540 PFLOPs)와 Swin-Ti student(DeiT-B teacher, 75% 유지)도 포함. (Table 2, p.8)
+  - [추가] DINO 자기증류에 적용(DeiT-S, IN-1k 100 epoch): teacher 총 589 → 384 PFLOPs (66% 유지), 선형 평가 73.7 → 74.2. GPU 4장으로 줄인 설정. (Table 4, p.9–10; 부록 A p.18)
+  - [추가] 오디오(AST-S, ESC-50): teacher 92.8 → 75.9 TFLOPs에서 정확도 유지(86.3 → 86.4), 44.0 TFLOPs(50%)에서 −0.6. (Table 3, p.9)
+  - [추가] 384px teacher 실험(Table 7)의 FLOPs에는 attention 점수·이미지 보간 비용이 빠짐. 같은 FLOPs라면 224px teacher + vanilla KD 쪽이 낫다고 원문이 밝힘. (부록 C, p.20)
+  - [추가] 실제 학습 시간(wall-clock)은 보고 안 됨. 효율은 teacher FLOPs·teacher 처리량·메모리로만 제시. (Table 2, Table 11)
 - 메모: 효율을 FLOPs, 처리량, 메모리 세 가지로 확인한 점은 좋음. 다만 −51%는 teacher 연산만의 감소율이라 전체 학습 비용 감소율과 다름. 증강이 약할수록 KD 이득이 큼 (Table 9: DeiT-S 약한 증강 71.3 → 79.7, 강한 증강 79.9 → 80.8).
 
 ### 02. DMAE (Masked Autoencoders Enable Efficient Knowledge Distillers) ([arXiv: 2208.12256](https://arxiv.org/abs/2208.12256))
@@ -47,6 +62,14 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: ImageNet-1K. MAE 기반 특징 증류 외에 DINO·MoCo-v3 학습에도 적용한 실험이 있음.
 - 평균 정확도 외 평가: 4.7절에서 여러 seed의 평균과 표준편차를 제시해 성능 향상의 안정성을 확인함.
 - 위치: 4.7절 Standard Deviation Analysis.
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 6건 / 수정 5건 / 추가 2건 / 확인 불가 0건. 본 판본: arXiv 2208.12256v2 (첫 쪽 표기 "v2 10 Nov 2022", md5가 arXiv v2와 같음). 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [수정] 제안 방법 195 GPU시간(증류 사전학습 83h + 미세조정 112h, 84.0%) 대 Supervised Feature Alignment 208h(미세조정된 ViT-L teacher에서 지도 증류 100 epoch, 82.8%). DeiT-B soft·hard 증류는 213h. 레시피 전체끼리의 비교라서 teacher 층을 줄인 효과만 따로 볼 수는 없음. (Table 7, p.8) ← 메모: 195 대 208 GPU시간. "208의 설정은 Table 7에서 다시 확인할 것"
+  - [수정] teacher forward 셈? Y로 보임 (증류 사전학습 83h에 teacher 실행이 들어 있을 것으로 추정, 내역 없음). ← 메모: teacher forward 셈? Y (증류 사전학습 GPU 시간에 포함)
+  - [수정] 설정: ImageNet-1K. 기본 teacher는 MAE ViT-L(공개 체크포인트), student는 무작위 초기화 ViT-B. 사전학습 100 epoch, 마스킹 75%. DINO(80.9 → 82.2)·MoCo-v3(81.1 → 82.5)는 예비 실험. (§4.1 p.4, Table 9 p.9) ← 메모: 설정: ImageNet-1K. DINO·MoCo-v3 학습에도 적용
+  - [수정] 평균 정확도 외 평가: DMAE 정렬 위치 3가지의 3 seed 평균·표준편차(9번째 층 84.03 ± 0.10 등). 기준선은 seed를 반복하지 않아서 기준선 대비 유의성 검정은 아님. (Table 8, p.9) ← 메모: 4.7절에서 여러 seed의 평균·표준편차로 성능 향상의 안정성을 확인
+  - [수정] 위치: Table 4 (기준선, p.7), Table 7 (GPU 시간, p.8), Table 8 (seed 표준편차, p.9), Table 9 (DINO·MoCo-v3, p.9). ← 메모: 위치: 4.7절만
+  - [추가] 적은 라벨 평가: IN-1%·10%에서 DMAE-B 50.3·73.4, MAE-B 1600 epoch 49.6·72.8. (Table 6, p.8)
+  - [추가] 마스킹 95%에서 83.6, 98%에서 82.4 (ViT-L → ViT-B). 이 설정의 학습 시간은 보고 안 됨. (Fig. 2, p.6)
 - 메모: 단일 실행 결과뿐 아니라 표준편차도 제시함. 평가 아이디어: 잡음·흐림 등 손상 강건성 평가를 붙여볼 만함 (이 논문이 강건성 손실을 보였다는 뜻은 아님).
 
 ### 03. Dyna-DINO ([arXiv: 2606.19483](https://arxiv.org/abs/2606.19483))
@@ -60,6 +83,14 @@ Shrink: 한 스텝 비용을 줄임
 - 평균 정확도 외 평가: 의미 영역 분할: 선형 영역 분할, 인코더 전용 마스크 트랜스포머(EOMT), 다중 스케일(MS) 추론의 세 가지 프로토콜 사용. 인스턴스 검색: 백본에서 이미지별 전역 임베딩을 추출하고, 질의 이미지와 데이터베이스 이미지의 유사도순으로 검색 결과를 정렬해 평균 정밀도(mAP)를 계산.
 - 위치: 4.3절의 의미 영역 분할·인스턴스 검색 평가.
 - **정정 (검수 보고서 근거)**: 시간 절감의 분모가 원문 안에서도 다름. 표 1 캡션은 FLOPs와 시간을 teacher 오버헤드 절감으로, §4.2는 ViT-Tiny의 22.5%를 총 학습 시간 절감으로 부름. 어느 범위인지 확정해 인용하지 않는다. [표 1·§4.2](https://arxiv.org/pdf/2606.19483v2#page=6)
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 7건 / 수정 4건 / 추가 3건 / 확인 불가 0건. 본 판본: arXiv 2606.19483v2 (md5가 arXiv v2와 같음). 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [수정] 효율화 방식: teacher 첫 블록부터 목표로 삼고, student 출력과 현재 목표 층의 online CKA가 τ 이상이거나 대기 epoch이 E_max에 이르면 다음 블록으로 넘어감. 아직 목표가 아닌 뒤쪽 teacher 블록은 실행하지 않음. (Algorithm 1, p.5) ← 메모: 앞쪽 층을 충분히 학습한 뒤 중간 층·마지막 층으로 목표를 옮김
+  - [수정] 하드웨어: L40S·RTX A6000·L40·RTX 2080 Ti 혼합 클러스터. 실험 1회 비용은 IN-100 12–14 L40S시간, IN-1K 300–400 L40S시간. 시간 절감률을 어느 GPU에서 쟀는지는 밝히지 않음. (§4.1, p.5) ← 메모: 하드웨어: L40S·RTX A6000·L40 등이 섞인 클러스터. 여러 종류 GPU에서 잰 시간이라 시간 비교에 주의
+  - [수정] 표 1 캡션은 teacher 오버헤드 절감으로, §4.2는 총 학습 시간 절감으로 부름. 범위를 정하지 않고 두 표현을 함께 적음. (Table 1, §4.2, p.6) ← 메모: 분모가 teacher 오버헤드라 전체 학습 비용 절감률과 다름
+  - [추가] ViT-G → ViT-Tiny, IN-100: FLOPs −28.82%, 시간 −22.5%. (Table 1, p.6)
+  - [추가] ImageNet-1K에서는 절감 폭이 작음: ViT-S FLOPs −9.44%·시간 −4.83%, ViT-Tiny −12.4%·−7.5% (CKA 0.8). 저자도 "modest"라고 씀. (Table 6, p.9)
+  - [추가] 설정: ImageNet-100(절제 실험)·ImageNet-1K에서 증류. teacher는 DINOv2 ViT-G(registers 포함), student는 무작위 초기화 ViT-S·ViT-Tiny. LARS, 전체 batch 256. 다운스트림은 ADE20K 분할, revisited Oxford·Paris 검색. (§4.1, p.5)
+  - [수정] 위치: Table 1 (IN-100 효율, p.6), Table 6 (IN-1K 효율, p.9), Table 2–5 (검색·분할, p.7–8), §5 (한계, p.10). ← 메모: 위치: 4.3절의 분할·검색 평가
 - 메모: 효율 감소분은 현재 목표 층 뒤의 teacher 연산 생략에서 발생. CKA·투영층을 포함한 전체 시간과 teacher 순전파 FLOPs를 구분해 비교.
 
 ### 04. Asymmetric Masked Distillation (AMD) ([arXiv: 2311.03149](https://arxiv.org/abs/2311.03149))
@@ -72,6 +103,12 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: SSV2·Kinetics-400 영상, ImageNet-1K 이미지. MAE 기반 teacher·student.
 - 평균 정확도 외 평가: AVA 행동 탐지 mAP, UCF101·HMDB51 전이, 행동 종류별 결과, 평균 어텐션 거리.
 - 위치: Table 1·7, 부록 Figure 4·5. [원문](https://arxiv.org/html/2311.03149v2)
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 10건 / 수정 2건 / 추가 3건 / 확인 불가 0건. 본 판본: arXiv 2311.03149v2 (md5가 arXiv v2와 같음). 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [수정] Table 7의 시간은 하드웨어가 캡션에 없음. 부록 B의 "절제 실험은 GPU 16장" 문장으로 추정한 것이며, Table 1만 A100 16장을 명시함. (p.6, p.9) ← 메모: 위 시간(Table 7)도 같은 하드웨어로 읽음
+  - [수정] 메모: Table 7은 무마스킹(양쪽 0%) 기준선과의 비교이고, Table 1(c)는 student 90%를 고정하고 teacher 비율만 바꾼 비교임. 32 → 19시간은 무마스킹 대비로만 사용. ← 메모: 메모: Table 7 무마스킹 기준선과 Table 1의 대칭·비대칭 마스킹 비교는 기준이 다름
+  - [추가] teacher 마스킹 비율에 따른 시간(A100 16장, 200 epoch): 85% 12.08h, 75%(기본) 13.33h, 60% 15.47h, 45% 18.93h. 정확도는 72.17 → 72.48. (Table 1c, p.6)
+  - [추가] 생성 정렬의 부가 비용: 직접 정렬만 10.83h, 직접 + 생성 13.33h(+23%). 생성기 깊이 1·2·4층에서 12.92·13.33·15.33h. (Table 1a·1d, p.6)
+  - [추가] AMD 안에서 비교(student 90% 고정): teacher 0% 26h·72.1%, 45% 19h·72.5%. teacher 25%는 72.3%. (Table 7 p.8, 부록 F p.11)
 - 메모: Table 7의 무마스킹 기준선과 Table 1의 대칭·비대칭 마스킹 비교는 기준이 다름. 32→19시간은 무마스킹 대비 수치로만 사용.
 
 ### 05. MaskAlign ([arXiv: 2211.08887](https://arxiv.org/abs/2211.08887))
@@ -85,6 +122,14 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: COCO에서 객체 탐지와 인스턴스 분할을 평가.
 - 평균 정확도 외 평가: 객체 탐지 APbox, 인스턴스 분할 APmask. 부록의 선형 프로빙·의미 영역 분할·배경 관련 평가도 확인.
 - 위치: 4.2절 COCO 평가, 부록 A 선형 프로빙, 부록 B 의미 영역 분할, 부록 C 배경 관련 평가.
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 6건 / 수정 5건 / 추가 2건 / 확인 불가 0건. 본 판본: arXiv 2211.08887v2 (md5가 arXiv v2와 같음). 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [수정] 얻는 것: 복원 디코더를 없애고 student 인코더는 패치 30%만 처리함(마스킹 70%). teacher는 전체 이미지를 처리함. (Table 1, p.5) ← 메모: 얻는 것: 픽셀 복원 디코더의 계산 제거
+  - [수정] [실측·외부] COCO 물체 특징 k-NN에서 선택한 상자 밖 영역을 무작위 배경으로 바꾸면 Top-1 77.4 → 53.8%. 같은 표의 DenseCL(72.5 → 41.5)·iBOT(75.2 → 45.8)도 비슷하게 떨어지고, 비교한 기존 방법 중 MaskAlign이 가장 높음. MaskAlign만의 손실 근거로 쓰지 않음. (Mind Your Augmentation, Table 3, p.8) ← 메모: [실측·외부] COCO 물체 특징 분류에서 배경을 바꾸면 Top-1 77.4 → 53.8%
+  - [수정] teacher forward 셈? Y (teacher 추론 시간 때문에 가속이 선형이 아니라고 본문에 적힘, 내역은 없음). 일회성 비용 셈? N. (p.7) ← 메모: teacher forward 셈? Y로 보임 (내역 없음)
+  - [수정] 설정: ImageNet-1K 사전학습, student ViT-B/16(ViT-L/16 포함), 고정 teacher CLIP-B/16(DINO-B·CLIP-L 비교), 200 epoch, attentive 마스킹 70%, batch 1024. 다운스트림은 COCO Mask R-CNN(ViTDet). (§4.1 p.4) ← 메모: 설정: COCO 탐지·인스턴스 분할 평가
+  - [추가] 원논문 자체 배경 강건성(ImageNet-9, 선형 프로빙): No-FG 51.9, Mixed-Rand 78.6, Mixed-Next 76.6. MILAN은 46.8·77.9·74.7. (Table 10, p.11)
+  - [수정] 위치: Table 1 (Forward Ratio, p.5), Table 2 (COCO, p.6), Table 7 (사전학습 속도, p.7), 부록 A–C (Table 8–10, p.11). ← 메모: 위치: 4.2절 COCO, 부록 A·B·C
+  - [추가] 마스킹 비율 절제(Table 4)는 반복 수를 70% 마스킹 200 epoch에 맞춤. 정확도는 20–80%에서 85.1–85.3으로 평평함. (Table 4, p.6)
 - 메모: student이 처리하는 토큰·복원 디코더 연산과 teacher의 전체 이미지 특징 추출 비용을 나눠 기록. 외부 배경 교체 결과는 MaskAlign 원논문의 실험과 구분.
 
 ### 06. Decoupled KD (DKD) ([arXiv: 2203.08679](https://arxiv.org/abs/2203.08679))
@@ -98,6 +143,14 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: 특징 전이 실험에서는 CIFAR-100에서 WRN-40-2 teacher로 증류한 WRN-16-2 student을 특징 추출기로 사용.
 - 평균 정확도 외 평가: 특징 추출기를 고정하고 STL-10·Tiny-ImageNet에서 선형 프로빙을 수행해 특징의 전이 가능성을 평가.
 - 위치: 4.2절 추가 분석의 특징 전이 실험.
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 7건 / 수정 3건 / 추가 3건 / 확인 불가 1건. 본 판본: arXiv 2203.08679v2 (PDF 첫 쪽 표기). 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [확인 불가] 확인 불가: CSV와 student 설정 파일만으로는 손상 데이터셋 이름을 확인하지 못함.
+  - [추가] 같은 CSV에서 vanilla KD는 0.3321이라서 DKD는 KD보다 보정이 좋고 student 단독보다만 나쁨. 기준을 함께 적음.
+  - [추가] 학습 비용(CIFAR-100, ResNet32×4 → 8×4): DKD 11 ms/배치·추가 파라미터 0으로 KD(11 ms)와 같음. ReviewKD 26 ms·1.8M, CRD 41 ms·12.3M. (Figure 2, p.7)
+  - [수정] 설정: CIFAR-100, ImageNet(ResNet-34 → ResNet-18, ResNet-50 → MobileNet-V1), MS-COCO 검출(Faster R-CNN-FPN). 특징 전이는 CIFAR-100에서 WRN-40-2 → WRN-16-2로 증류한 특징 추출기를 고정하고 마지막 GAP 특징에 선형층만 학습. (§4, p.5–8; 부록 A.7 p.13) ← 메모: 설정: 특징 전이 실험에서 WRN-40-2 → WRN-16-2를 특징 추출기로 씀
+  - [수정] 평균 정확도 외 평가: STL-10·Tiny-ImageNet 선형 프로빙(DKD 72.9·37.1, KD 70.9·33.9), COCO 검출 AP, t-SNE, 로짓 상관행렬 차이. (Table 13 p.8, Table 10 p.7, Fig. 3·4 p.8) ← 메모: 평균 외: STL-10·Tiny-ImageNet 선형 프로빙
+  - [수정] 위치: Figure 2 (학습 시간·파라미터, p.7), Table 10 (COCO, p.7), Table 13 (특징 전이, p.8), 부록 A.7 (측정 정의, p.12–13). ← 메모: 위치: 4.2절 특징 전이 실험
+  - [추가] [실측·원논문] 검출(COCO, R-101 → R-18)에서 DKD 단독 AP 35.05로 ReviewKD 36.75보다 낮음. 저자가 로짓 방법은 위치 정보를 전달하지 못한다고 한계로 적음. (Table 10 p.7, §5 p.8)
 - 메모: NCKD는 정답 클래스를 제외한 클래스들의 예측 분포에 담긴 지식을 다룸. 기존 KD에서는 teacher의 정답 확신도가 높을수록 이 부분의 기여가 작아지는 점을 분리해 다룸.
 
 ### 07. Information Theoretic Representation Distillation (ITRD) ([arXiv: 2112.00459](https://arxiv.org/abs/2112.00459))
@@ -111,6 +164,13 @@ Shrink: 한 스텝 비용을 줄임
 - 평균 정확도 외 평가: CIFAR-100 특징을 고정한 STL-10·Tiny-ImageNet 선형 프로빙.
 - 위치: 손실 정의, 표현 전이 Table 4. [원문](https://arxiv.org/abs/2112.00459)
 - **정정 (검수 보고서 근거)**: STL-10 72.7%, Tiny-ImageNet 36.0% 선형 평가는 v2 표 4에만 있음. 저장소 PDF(v3)에는 그 표가 없으므로 인용 시 v2를 명시. [ITRD v2 표 4](https://arxiv.org/pdf/2112.00459v2#page=13)
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 6건 / 수정 4건 / 추가 2건 / 확인 불가 0건. 본 판본: arXiv 2112.00459v3 (PDF 첫 쪽 표기). 정정 줄 확인용으로 v2도 받음. 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [수정] [구조] teacher·student의 최종 FC 직전 표현을 배치 단위로 받아 상관·Gram 행렬을 계산함. 로짓만 주는 teacher API에는 그대로 못 씀. (§3, p.3–4) ← 메모: [구조] teacher·student 중간 특징을 배치 단위로 받음
+  - [추가] ImageNet(ResNet-34 → 18) 학습 처리량은 그래프로만 제시됨. 그래프에서 읽으면 ITRD ≈530 img/s로 KD(≈540)와 비슷하고 CRD(k=16384, ≈130)보다 큼. 근사 판독값임. (Figure 2, p.9)
+  - [수정] 설정: CIFAR-100·ImageNet 분류, CIFAR-10 이진 신경망(ResNet-18), SQuAD 1.1 질의응답(BERT 12층 → 6·3층). (Table 1 p.8, Table 3 p.10) ← 메모: 설정: CIFAR-100·ImageNet, 여러 CNN. 이진 신경망 증류도
+  - [수정] 위치: 손실 정의 §3–4 (v3), 학습 효율 Figure 2 (v3 p.9), 표현 전이 Table 4는 v2 p.13에만 있음. ← 메모: 위치: 표현 전이 Table 4
+  - [수정] 메모: 원문 처리량 비교는 배치 크기를 고정하지 않고 8 GB 메모리 제약에 맞춰 방법마다 조정한 결과임. 배치를 고정한 비교는 원문에 없음. ← 메모: 메모: 연산 비교 시 배치 크기·특징 차원 고정
+  - [추가] ImageNet ResNet-34 → ResNet-18: top-1 error 28.32%. 더 비싼 CRCD·HSAKD 다음 순위. (p.9)
 - 메모: 연산을 비교할 때 배치 크기와 특징 차원을 고정해야 함. 상관행렬·Gram 행렬 계산과 특징 투영층도 KD 오버헤드에 포함.
 
 ### 08. Understanding the Role of the Projector in KD ([arXiv: 2303.11098](https://arxiv.org/abs/2303.11098))
@@ -124,6 +184,12 @@ Shrink: 한 스텝 비용을 줄임
 - 설정: CIFAR-100·ImageNet 분류, CNN→ViT 증류, COCO 탐지.
 - 평균 정확도 외 평가: 특이값 변화, 프로젝터 입력·출력 상관, 객체 탐지 AP.
 - 위치: Figure 2·3, 다운스트림 평가. [원문](https://arxiv.org/html/2303.11098v5)
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 7건 / 수정 3건 / 추가 2건 / 확인 불가 0건. 본 판본: arXiv 2303.11098v5 (PDF 첫 쪽 표기, AAAI 2024). 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [수정] 어떻게 쟀나: 비용 측정 없음. 효율은 구조 설명과 초록·결론의 주장으로만 제시. 정확도 벤치마크만 있음. (p.1, p.7) ← 메모: 어떻게 쟀나: 손실 구성의 연산·메모리 규모와 배치 크기·특징 차원
+  - [수정] teacher forward 셈? 해당 없음(비용 측정 없음) / 일회성 비용 셈? 해당 없음. ← 메모: teacher forward 셈? N / 일회성 비용 셈? N
+  - [추가] 평균 외 평가: 평행이동 등변성 μT (DeiT-S 1.52, CivT-S 0.13, 제안 0.04, 낮을수록 등변). (Table 7, p.7)
+  - [추가] COCO 검출: Faster R-CNN R50 → MobileNetV2 mAP 29.47 → 32.92(ReviewKD 33.71). YOLOv5m → s 56.8 → 57.3. 표의 열 이름(mAP 50-95·mAP 50)과 값의 순서가 맞지 않아 보이므로 인용 시 주의. (Table 8, p.7)
+  - [수정] 위치: Figure 2 (p.3), Figure 3 (p.4), Table 1 (정규화 절제, p.4), Table 7·8 (등변성·COCO, p.7), 하드웨어 p.5. ← 메모: 위치: Figure 2·3, 다운스트림 평가
 - 메모: 특이값·입출력 상관은 프로젝터 내부 분석 지표. 이를 작은 물체 인식·강건성 등 특정 능력의 손실로 바꾸어 적지 않음.
 
 ### 09. Parameter-Efficient and Student-Friendly Knowledge Distillation (PESF-KD) ([원문](https://arxiv.org/abs/2205.15308))
@@ -137,6 +203,13 @@ Shrink: 한 스텝 비용을 줄임
 - 평균 정확도 외 평가: teacher·student KL divergence, 예측 일치율(Agree), 논문 정의의 PL·Gap.
 - 위치: Figure 1, Table 3, 일관성 분석. [저자 코드](https://github.com/1170300319/PESF-KD)
 - **정정 (검수 보고서 근거)**: 링크된 arXiv 판은 prediction KL, CKA, sharpness GAP를 분석함. 비용·평가 칸을 이 판 기준으로 다시 볼 것. [PESF-KD §4](https://arxiv.org/pdf/2205.15308v1#page=6)
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 7건 / 수정 2건 / 추가 4건 / 확인 불가 0건. 본 판본: arXiv 2205.15308v1 (arXiv에 v1만 있음. `tools/shrink/arxiv/pesf_v1.pdf`). 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [추가] 같은 표: 갱신 파라미터 vanilla KD 47M, FT-KD 149M, PESF-KD 54M. top-1 69.20 / 70.00 / 69.96. batch time 단위는 표에 없음. (Table 3, p.8)
+  - [수정] teacher forward 셈? 명시 없음(학습 batch time이라 포함으로 보임) / 일회성 비용 셈? N (시작 teacher의 학습 비용 없음) / 하드웨어 = 부록에 8× RTX 3090이라고만 적음. Table 3 측정에 쓴 장수와 batch time 단위는 명시 없음. (부록 p.14) ← 메모: teacher forward 셈? · 일회성 · 하드웨어 = 확인 안 함
+  - [수정] 평균 정확도 외 평가: teacher-student 예측 KL, CKA, sharpness GAP. Table 3 PESF-KD는 KL 8.9, GAP 18.6이며 본문 §5.3.2는 19.2로 적어 서로 다름. (p.6, Table 3 p.8, p.9) ← 메모: 평균 외: KL, 예측 일치율(Agree), PL·Gap
+  - [추가] CIFAR-100 vgg13 → vgg8: 갱신 파라미터 ∼54M → ∼16M. (§5.3.1, p.9)
+  - [추가] 어댑터 구조 비교(VGG, CIFAR-100): batch time 어댑터 0.137, LoRA 0.166, Scaled PA 0.165. (Table 5, p.10)
+  - [추가] GLUE(Table 4)도 학습 비용이 vanilla KD 다음으로 낮다고 적음. vanilla KD보다 싸다는 근거는 없음. (§5.3.3, p.10)
 - 메모: FT-KD 대비 비용 절감 사례. 같은 표의 vanilla KD 0.46과 PESF-KD 0.47을 근거로 vanilla KD보다 빠르다고 쓰지 않음.
 
 ### 10. Knowledge Distillation from A Stronger Teacher (DIST) ([원문](https://arxiv.org/abs/2205.10536))
@@ -151,6 +224,12 @@ Shrink: 한 스텝 비용을 줄임
 - 평균 정확도 외 평가: 탐지 AP, Cityscapes mIoU. 외부 연구는 ImageNet-C·R·Sketch·A·Stylized-ImageNet 평가.
 - 위치: §1·3, 탐지·분할 평가. 외부 강건성 Table 3. [공식 코드](https://github.com/hunto/DIST_KD)
 - **정정 (검수 보고서 근거)**: 학습 처리량 표가 있음: 8×V100, ResNet-34 → 18에서 DIST 14.19, vanilla KD 14.28 batches/s. "비용 보고 없음"이 아님. [DIST 표 11](https://arxiv.org/pdf/2205.10536v3#page=14)
+- **원문 대조 (2026-11-19, 서브에이전트가 PDF와 한 줄씩 대조)**: 일치 8건 / 수정 2건 / 추가 3건 / 확인 불가 0건. 본 판본: arXiv 2205.10536v3 (PDF 첫 쪽 표기. `tools/shrink/arxiv/dist_v3.pdf`). 아래 항목이 위 서술과 다르면 **아래가 맞다**.
+  - [추가] 비교 대상 비용: CRD는 ImageNet 전체 128-d 특징 메모리 뱅크와 추가 260M FLOPs가 필요하다고 원문이 적음. (§4.2, p.7)
+  - [추가] 같은 실험에서 분포 내 ImageNet도 78.6 → 76.6, V2 67.2 → 63.9, ImageNet-A 16.0 → 11.2로 떨어짐. 분포 밖 하락이 분포 내 하락과 함께 나타나므로 강건성만의 손실로 읽지 않음. (Distilling OOD Robustness, Table 3, p.8)
+  - [수정] teacher forward 셈? Y로 보임(학습 속도 전체, 내역 없음) / 일회성 비용 셈? N / 하드웨어 = NVIDIA V100 8장. 단위 batches/s. (Table 11, p.14) ← 메모: teacher forward 셈? · 일회성 · 하드웨어 = 확인 안 함
+  - [추가] 탐지(COCO, Faster R-CNN-R50): DIST 40.4 AP로 KD 39.7보다 높고 CWD 41.7보다 낮음. 41.8은 FPN 특징 MSE를 더한 DIST + mimic의 값. 분할(Cityscapes): DeepLabV3-R18 77.10, PSPNet-R18 76.31 mIoU. (Table 6·7, p.8)
+  - [수정] 위치: §1 (비용 주장, p.2), §3 (손실, p.5), Table 6·7 (탐지·분할, p.8), Table 11 (학습 속도, p.14), 외부 Table 3 (2311.01441v2, p.8). ← 메모: 위치: §1·3, 탐지·분할 평가, 외부 Table 3
 - 메모: 강한 teacher를 사용하는 비용과 DIST 손실 자체의 비용을 분리. 외부 강건성 수치는 CLIP ViT-L/14→ViT-B/16이라는 해당 설정에 한정.
 
 ## 축 분류 메모
