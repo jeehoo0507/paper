@@ -1,5 +1,7 @@
 # 2_Skip 메모
 
+> **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 이후 원문 검수에서 고쳐야 할 곳 20건이 나왔고 아직 반영하지 않았다. 수치를 쓰기 전에 [`audit/README.md`](audit/README.md)의 해당 줄을 먼저 본다.
+
 Skip: 샘플, teacher 호출, 학습 구간을 건너뜀  
 논문 목록과 PDF: [`../Related Work/Efficient KD papers/2_Skip/`](<../Related Work/Efficient KD papers/2_Skip>)  
 작성 규칙과 항목 설명: [README](README.md)
