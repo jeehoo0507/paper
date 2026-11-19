@@ -1,5 +1,7 @@
 # 1_Shrink 메모
 
+> **팀원 최신본 대조 (2026-11-19)**: [yohan0825/paper의 1_Shrink.md](https://github.com/yohan0825/paper/blob/main/efficient-vision-kd/notes/1_Shrink.md) 최신본(011e5b2)과 비교함. 이 파일이 그 초안에 수치와 측정 항목을 더한 판이라, 최신본에만 있는 사실은 없음.
+>
 > **원문 대조 전 초안.** 이 메모는 Claude가 PDF를 읽고 채운 것이다. 이후 원문 검수에서 고쳐야 할 곳 20건이 나왔고 아직 반영하지 않았다. 수치를 쓰기 전에 [`audit/README.md`](audit/README.md)의 해당 줄을 먼저 본다.
 
 Shrink: 한 스텝 비용을 줄임  
