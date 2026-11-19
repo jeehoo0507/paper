@@ -13,6 +13,7 @@
 
 논문을 하나씩 소개하는 글이 되지 않도록, 각자 만드는 표는 전부 이 두 칸의 일부다.
 **먼저 읽을 것: [CHECKLIST.md](CHECKLIST.md)** (열 이름, 분모, 원문 대조 규칙)
+**맡은 논문: [papers.md](papers.md)** (축별 논문 목록과 할 일 체크)
 
 ## 분업 원칙: AI가 초안, 사람이 확정
 
@@ -63,8 +64,8 @@
 
 ## 결과물을 두는 곳
 
-- 체크표: `writing/5_checklist/<축>.md`
-- 방법 표와 축 문단: `writing/4_taxonomy/<축>.md`
+- 체크표: [`5_checklist/`](5_checklist) (논문 행이 미리 들어 있다)
+- 방법 표와 축 문단: [`4_taxonomy/`](4_taxonomy) (같음)
 - 2절 초안: `writing/2_scope/draft.md`
 - 각자 브랜치에서 작업하고 PR로 올린다.
 

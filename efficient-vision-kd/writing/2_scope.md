@@ -54,7 +54,7 @@
 
 ### (4) 가까운 선행 연구
 
-논문마다 "한 것 / 안 한 것 / 우리와의 차이"를 한 줄씩.
+논문마다 "한 것 / 안 한 것 / 우리와의 차이"를 한 줄씩. 아래 다섯 편은 비용 쪽, 그다음 다섯 편은 "평균이 가리는 손실" 쪽에서 우리와 가장 가깝다. 뒤의 다섯 편은 증류 학습에서 teacher 예산을 줄인 경우를 다뤘는지를 꼭 확인한다.
 
 | 논문 | 한 것 | 안 한 것 |
 |---|---|---|
@@ -63,6 +63,11 @@
 | End-to-End Energy Accounting of Distillation Pipelines (2605.13981) | | |
 | Is Knowledge Distillation Actually Greener? (2602.09691) | | |
 | The Surprising Effectiveness of Canonical KD for Semantic Segmentation (2604.25530) | | |
+| When Masking Helps or Hurts Robustness in Compressed CLIP (2609.39704) | | |
+| Later Is Better: Token Reduction under Distribution Shift (2610.07758) | | |
+| DRoP: Distributionally Robust Data Pruning (2404.05579) | | |
+| Impact of Coreset Selection on Spurious Correlations (2507.11690) | | |
+| Teacher's Pet (2106.10494) | | |
 
 ### (5) 측정·평가 논문 체크표
 
