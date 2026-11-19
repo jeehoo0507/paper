@@ -1,31 +1,34 @@
 # 5절 체크표: 측정
 
 담당: 2절 담당. 양식과 칸 값의 뜻은 [`../5_literature.md`](../5_literature.md).
-칸 값: 수치(값과 위치) / 언급 / 미보고 / 해당 없음. 확인 칸이 빈 행은 본문에 쓸 수 없다.
+
+> **AI 초안 (2026-11-19).** [`../../notes/`](../../notes)의 읽기 메모에서 기계적으로 옮긴 값이다. 원문과 대조하지 않았다. 칸 값을 원문으로 확인해 고치고 확인 열에 `이름 날짜`를 적는다. "메모에 없음"은 메모에 적혀 있지 않다는 뜻이지 논문이 보고하지 않았다는 뜻이 아니다. 고칠 곳은 [`../../notes/audit/`](../../notes/audit/README.md)에도 있다.
+
+칸 값을 확정할 때는 수치(값과 위치) / 언급 / 미보고 / 해당 없음 중 하나로 바꾼다. 확인 칸이 빈 행은 본문에 쓸 수 없다.
 
 ## 아낀 것 (비용)
 
 | 번호 | 논문 | teacher 연산 | 전체 학습 연산 | 실제 시간 | 준비 비용 | 저장 용량 | 측정 단위 | 하드웨어 | 본 판본 | 확인 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| M-01 | A Good Teacher is Patient and Consistent | | | | | | | | | |
-| M-02 | VanillaKD | | | | | | | | | |
-| M-03 | DeiT | | | | | | | | | |
-| M-04 | Distillation Scaling Laws | | | | | | | | | |
-| M-05 | Is KD Actually Greener? | | | | | | | | | |
-| M-06 | Are Coreset Selection Methods Worth Their Cost? | | | | | | | | | |
-| M-07 | Canonical KD for Semantic Segmentation | | | | | | | | | |
+| M-01 | A Good Teacher is Patient and Consistent | 안 셈 (메모: N) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | epoch 수. 실제 시간이나 연산량은 보고 안 됨 | Google Cloud TPU (사양 보고 안 됨) | [arXiv: 2106.05237](https://arxiv.org/abs/2106.05237) | |
+| M-02 | VanillaKD | 셈 (메모: Y (student 1회 학습의 총 GPU 시간에 포함)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N (teacher 학습 비용 없음)) | 메모에 없음 | 총 GPU 시간, epoch | V100 8장 1대 | [arXiv: 2305.15781](https://arxiv.org/abs/2305.15781) | |
+| M-03 | DeiT | 안 셈 (메모: N (증류 시의 학습 시간 없음)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 있음 (메모: 저장 용량 수치 언급) | 추론 처리량(img/s), 학습 시간(증류 없는 DeiT-B: 8-GPU 1대에서 사전학습 53시간) | V100 16 GB 1장 (처리량), 8-GPU 1대 (학습) | [arXiv: 2012.12877](https://arxiv.org/abs/2012.12877) | |
+| M-04 | Distillation Scaling Laws | 시나리오에 따라 Y·N을 명시 | 메모에 없음 | 메모에 없음 | 시나리오에 따라 Y·N을 명시 | 메모에 없음 | FLOPs (모델 크기와 토큰 수의 함수로 근사) | 확인 안 함 | [arXiv: 2502.08606](https://arxiv.org/abs/2502.08606) | |
+| M-05 | Is KD Actually Greener? | 셈 (메모: Y) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 셈 (메모: Y (teacher 학습 비용을 넣는 경우와 이미 치른 비용으로 보는 경…) | 메모에 없음 | 탄소 발자국(kgCO2e), 손익분기 추론 토큰 수. 생애주기 평가 도구(MLCA) 사용 | 확인 안 함 | [arXiv: 2602.09691](https://arxiv.org/abs/2602.09691) | |
+| M-06 | Are Coreset Selection Methods Worth Their Cost? | 해당 없음 (메모) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 셈 (메모: Y (선택 시간을 총비용에 포함, 재사용 횟수로 나눈 경우도 분석)) | 메모에 없음 | 실제 시간 (통제된 시간 측정 실행으로 추정한 GPU 시간) | RTX 1장 (모델명은 확인 안 함). 비용은 단일 장비 추정치라고 한계… | [arXiv: 2609.22894](https://arxiv.org/abs/2609.22894) | |
+| M-07 | Canonical KD for Semantic Segmentation | 셈 (메모: Y (학습의 실제 시간에 포함)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | GPU 시간, 반복 수 | 확인 안 함 | [arXiv: 2604.25530](https://arxiv.org/abs/2604.25530) | |
 
 ## 치른 것 (성능)
 
 | 번호 | 논문 | 평균 정확도 | 그룹별, 최저 그룹 | 클래스별, 꼬리·하위 | 보정 | teacher 일치율 | 분포 이동, 손상 | 전이, 다른 과제 | seed 수 | 표준편차 | 확인 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| M-01 | A Good Teacher is Patient and Consistent | | | | | | | | | | |
-| M-02 | VanillaKD | | | | | | | | | | |
-| M-03 | DeiT | | | | | | | | | | |
-| M-04 | Distillation Scaling Laws | | | | | | | | | | |
-| M-05 | Is KD Actually Greener? | | | | | | | | | | |
-| M-06 | Are Coreset Selection Methods Worth Their Cost? | | | | | | | | | | |
-| M-07 | Canonical KD for Semantic Segmentation | | | | | | | | | | |
+| M-01 | A Good Teacher is Patient and Consistent | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| M-02 | VanillaKD | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
+| M-03 | DeiT | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: teacher 일치) | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
+| M-04 | Distillation Scaling Laws | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| M-05 | Is KD Actually Greener? | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| M-06 | Are Coreset Selection Methods Worth Their Cost? | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| M-07 | Canonical KD for Semantic Segmentation | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
 
 ## 비교
 

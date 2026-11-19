@@ -1,51 +1,54 @@
 # 5절 체크표: Reuse
 
-담당: Reuse·Substitute 담당. 양식과 칸 값의 뜻은 [`../5_literature.md`](../5_literature.md).
-칸 값: 수치(값과 위치) / 언급 / 미보고 / 해당 없음. 확인 칸이 빈 행은 본문에 쓸 수 없다.
+담당: Reuse 담당. 양식과 칸 값의 뜻은 [`../5_literature.md`](../5_literature.md).
+
+> **AI 초안 (2026-11-19).** [`../../notes/`](../../notes)의 읽기 메모에서 기계적으로 옮긴 값이다. 원문과 대조하지 않았다. 칸 값을 원문으로 확인해 고치고 확인 열에 `이름 날짜`를 적는다. "메모에 없음"은 메모에 적혀 있지 않다는 뜻이지 논문이 보고하지 않았다는 뜻이 아니다. 고칠 곳은 [`../../notes/audit/`](../../notes/audit/README.md)에도 있다.
+
+칸 값을 확정할 때는 수치(값과 위치) / 언급 / 미보고 / 해당 없음 중 하나로 바꾼다. 확인 칸이 빈 행은 본문에 쓸 수 없다.
 
 ## 아낀 것 (비용)
 
 | 번호 | 논문 | teacher 연산 | 전체 학습 연산 | 실제 시간 | 준비 비용 | 저장 용량 | 측정 단위 | 하드웨어 | 본 판본 | 확인 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| R-01 | FKD (A Fast KD Framework for Visual Recognition) | | | | | | | | | |
-| R-02 | ReLabel (Re-labeling ImageNet) | | | | | | | | | |
-| R-03 | FerKD | | | | | | | | | |
-| R-04 | TinyViT | | | | | | | | | |
-| R-05 | Dataset Reinforcement | | | | | | | | | |
-| R-06 | MobileCLIP | | | | | | | | | |
-| R-07 | CLIP-Embed-KD | | | | | | | | | |
-| R-08 | 지식 저장 증류 (랩실, 검출) | | | | | | | | | |
-| R-09 | Are Large-scale Soft Labels Necessary? (LPLD) | | | | | | | | | |
-| R-10 | TinyCLIP | | | | | | | | | |
-| R-11 | Initializing Models with Larger Ones | | | | | | | | | |
-| R-12 | SimKD (KD with the Reused Teacher Classifier) | | | | | | | | | |
-| R-13 | MobileSAM | | | | | | | | | |
-| R-14 | Tailored Coordinate System (TCS) | | | | | | | | | |
+| R-01 | FKD | 학습 시간에는 없음(구조상 0). 생성 단계는 N | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 저장 용량 Y, 생성 시간 N | 있음 (메모: 저장 용량 수치 언급) | 학습 시간 비(기준 방법 대비 배수), 저장 용량(GB) | 보고 안 됨 | [arXiv: 2112.01528](https://arxiv.org/abs/2112.01528) | |
+| R-02 | ReLabel (Re-labeling ImageNet) | 셈 (메모: Y (KD 쪽 학습 시간에 포함, ReLabel 쪽은 일회성 생성으로 따…) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 셈 (메모: Y (생성 시간, 저장 용량). 기계 주석자 자체의 학습 비용은 N (공…) | 있음 (메모: 저장 용량 수치 언급) | GPU시간·GPU일, 저장 용량(GB), 학습 시간 증가율 | NVIDIA V100 4장 | [arXiv: 2101.05022](https://arxiv.org/abs/2101.05022) | |
+| R-03 | FerKD | 안 셈 (메모: N) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 있음 (메모: 저장 용량 수치 언급) | epoch (학습 예산) | A100 80 GB 클러스터 (장수 보고 안 됨) | [arXiv: 2312.17473](https://arxiv.org/abs/2312.17473) | |
+| R-04 | TinyViT | 셈 (메모: Y (온라인 증류 쪽 시간에 포함, 제안 방법 쪽은 저장 단계로 따로 보…) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 셈 (메모: Y (logit 생성 시간, 저장 용량). teacher 학습 비용은 N) | 있음 (메모: 저장 용량 수치 언급) | GPU일·GPU시간, GPU 메모리(GB), 저장 용량(GB) | NVIDIA V100 | [arXiv: 2207.10666](https://arxiv.org/abs/2207.10666) | |
+| R-05 | Dataset Reinforcement | 셈 (메모: Y (생성 시간으로)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 셈 (메모: Y. teacher 앙상블 자체의 학습 비용은 N) | 있음 (메모: 저장 용량 수치 언급) | GPU시간, 저장 용량(GB), 학습은 반복 수와 실제 시간 | A100 64장 (생성), A100 8장 (학습) | [arXiv: 2303.08983](https://arxiv.org/abs/2303.08983) | |
+| R-06 | MobileCLIP | 학습 시간에는 없음(구조상 0). 생성 단계는 N | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 저장 용량 Y, 생성 시간 N | 있음 (메모: 저장 용량 수치 언급) | epoch당 학습 시간, 본 표본 수, 저장 용량(TB), 추론 지연 | A100 80 GB 8장 (소규모 학습) | [arXiv: 2311.17049](https://arxiv.org/abs/2311.17049) | |
+| R-07 | CLIP-Embed-KD | 셈 (메모: Y (비교 대상 쪽)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | GPU 메모리 배수, 학습 시간 배수 | 보고 안 됨 | [arXiv: 2404.06170](https://arxiv.org/abs/2404.06170) | |
+| R-08 | 지식 저장 증류 (랩실, 검출) | 셈 (메모: Y (비교 대상의 학습 시간에 포함)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 저장 용량 Y, 저장 단계 시간 N | 있음 (메모: 저장 용량 수치 언급) | 학습 시간 배수(student 단독 = 1배), 저장 용량(GB) | RTX A6000 8장 | [DBpia](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE12055100) | |
+| R-09 | Are Large-scale Soft Labels Necessary? | 안 셈 (메모: N) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N (합성·재라벨링 시간 보고 안 됨)) | 있음 (메모: 저장 용량 수치 언급) | 저장 용량(GB), 압축 배수 | A100 80 GB 4장 | [arXiv: 2410.15919](https://arxiv.org/abs/2410.15919) | |
+| R-10 | TinyCLIP | 증류 학습 시간에 포함된 것으로 보이나 명시 없음 | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | GPU일 (목표 정확도 도달 시간), 추론 처리량 | V100 또는 A100 32장 | [arXiv: 2309.12314](https://arxiv.org/abs/2309.12314) | |
+| R-11 | Initializing Models with Larger Ones | 해당 없음 (메모) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | epoch, 학습 시간 배수 | 보고 안 됨 | [arXiv: 2311.18823](https://arxiv.org/abs/2311.18823) | |
+| R-12 | SimKD | 안 셈 (메모: N) | 메모에 없음 | 메모에 없음 | 안 셈 (메모: N) | 메모에 없음 | epoch, 추가 매개변수 비율 | RTX 2080 Ti 8장 (CIFAR) | [arXiv: 2203.14001](https://arxiv.org/abs/2203.14001) | |
+| R-13 | MobileSAM | 저장 단계 1회로 처리, 시간은 N | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N) | 메모에 없음 | GPU 수 × 반복 수 × 데이터 수 (대략적 비교), 추론 시간(ms) | GPU 1장 (종류 보고 안 됨) | [arXiv: 2306.14289](https://arxiv.org/abs/2306.14289) | |
+| R-14 | Tailored Coordinate System (TCS) | 셈 (메모: Y (비교 대상의 시간에 포함)) | 메모에 없음 | 있음 (메모: 시간 관련 언급) | 안 셈 (메모: N (좌표계 계산 시간 없음)) | 있음 (메모: 저장 용량 수치 언급) | epoch당 실제 시간(초), GPU 메모리(GB) | NVIDIA RTX 3090 1장 | [arXiv: 2412.09388](https://arxiv.org/abs/2412.09388) | |
 
 ## 치른 것 (성능)
 
 | 번호 | 논문 | 평균 정확도 | 그룹별, 최저 그룹 | 클래스별, 꼬리·하위 | 보정 | teacher 일치율 | 분포 이동, 손상 | 전이, 다른 과제 | seed 수 | 표준편차 | 확인 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| R-01 | FKD (A Fast KD Framework for Visual Recognition) | | | | | | | | | | |
-| R-02 | ReLabel (Re-labeling ImageNet) | | | | | | | | | | |
-| R-03 | FerKD | | | | | | | | | | |
-| R-04 | TinyViT | | | | | | | | | | |
-| R-05 | Dataset Reinforcement | | | | | | | | | | |
-| R-06 | MobileCLIP | | | | | | | | | | |
-| R-07 | CLIP-Embed-KD | | | | | | | | | | |
-| R-08 | 지식 저장 증류 (랩실, 검출) | | | | | | | | | | |
-| R-09 | Are Large-scale Soft Labels Necessary? (LPLD) | | | | | | | | | | |
-| R-10 | TinyCLIP | | | | | | | | | | |
-| R-11 | Initializing Models with Larger Ones | | | | | | | | | | |
-| R-12 | SimKD (KD with the Reused Teacher Classifier) | | | | | | | | | | |
-| R-13 | MobileSAM | | | | | | | | | | |
-| R-14 | Tailored Coordinate System (TCS) | | | | | | | | | | |
+| R-01 | FKD | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
+| R-02 | ReLabel (Re-labeling ImageNet) | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 분포 이동·손상) | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
+| R-03 | FerKD | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모: 3회 평균 | 메모에 없음 | |
+| R-04 | TinyViT | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
+| R-05 | Dataset Reinforcement | 있음 (메모) | 메모에 없음 | 메모에 없음 | 있음 (메모: 보정) | 메모에 없음 | 있음 (메모: 분포 이동·손상) | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
+| R-06 | MobileCLIP | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 분포 이동·손상) | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| R-07 | CLIP-Embed-KD | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| R-08 | 지식 저장 증류 (랩실, 검출) | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| R-09 | Are Large-scale Soft Labels Necessary? | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| R-10 | TinyCLIP | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 분포 이동·손상) | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
+| R-11 | Initializing Models with Larger Ones | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 있음 (메모: 전이) | 메모에 없음 | 메모에 없음 | |
+| R-12 | SimKD | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| R-13 | MobileSAM | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
+| R-14 | Tailored Coordinate System (TCS) | 있음 (메모) | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | 메모에 없음 | |
 
 ## 비교
 
 | 번호 | 논문 | Full KD 기준선 | 같은 시간·연산으로 맞춘 비교 | 무작위 대조 | 확인 |
 |---|---|---|---|---|---|
-| R-01 | FKD (A Fast KD Framework for Visual Recognition) | | | | |
+| R-01 | FKD | | | | |
 | R-02 | ReLabel (Re-labeling ImageNet) | | | | |
 | R-03 | FerKD | | | | |
 | R-04 | TinyViT | | | | |
@@ -53,9 +56,9 @@
 | R-06 | MobileCLIP | | | | |
 | R-07 | CLIP-Embed-KD | | | | |
 | R-08 | 지식 저장 증류 (랩실, 검출) | | | | |
-| R-09 | Are Large-scale Soft Labels Necessary? (LPLD) | | | | |
+| R-09 | Are Large-scale Soft Labels Necessary? | | | | |
 | R-10 | TinyCLIP | | | | |
 | R-11 | Initializing Models with Larger Ones | | | | |
-| R-12 | SimKD (KD with the Reused Teacher Classifier) | | | | |
+| R-12 | SimKD | | | | |
 | R-13 | MobileSAM | | | | |
 | R-14 | Tailored Coordinate System (TCS) | | | | |
