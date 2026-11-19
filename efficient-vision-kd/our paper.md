@@ -1,5 +1,8 @@
 # Our Paper — 방향과 목차
 
+> **2026-11-19 알림**: 이 문서의 일부는 이후 논의로 바뀌었다. 현재 방향과 분업은 [`writing/README.md`](writing/README.md)를 따른다.
+> 바뀐 것: (1) 기여 3의 "꺾이는 지점을 잼"은 약속하지 않는다. (2) 보고 실태 숫자(0/18, 5/18, 3/14)는 분모를 다시 정한 뒤 [`writing/5_checklist/`](writing/5_checklist)에서 새로 센다. (3) Shrink의 기준은 "teacher 호출 1회의 연산"이다.
+
 **제목**: *Efficient Knowledge Distillation for Vision: A Survey and Controlled Study of What Is Saved and What Is Lost*
 
 **국문**: 비전 지식 증류의 효율화: 무엇을 아끼고 무엇을 잃는가 (서베이와 통제 실험)
