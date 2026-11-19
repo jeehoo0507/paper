@@ -9,13 +9,15 @@ PDF: [`../Related Work/Efficient KD papers/`](<../Related Work/Efficient KD pape
 
 ## Shrink (8편) · Shrink 담당
 
+**축의 기준**: teacher 순전파 1회의 연산이 줄어드는가. logit 증류인지 특징 증류인지는 따지지 않는다. 폴더 README의 "한 스텝 비용을 줄임"보다 좁은 정의다. 이 기준이면 메모상 01–04번만 해당하고 05–08번은 해당하지 않는다. 담당자가 원문으로 확정한다.
+
 | 번호 | 논문 | 한 줄 | 링크 | 갈래 (초안) | 표시 | 4절 | 5절 | 확인 |
 |---|---|---|---|---|---|---|---|---|
 | S-01 | MaskedKD (The Role of Masking for Efficient Supervised KD of ViTs) | teacher 입력 토큰을 student attention으로 골라 줄임 | [arXiv: 2302.10494](https://arxiv.org/abs/2302.10494) | teacher 입력 토큰 |  | ☐ | ☐ | |
-| S-02 | DMAE (Masked Autoencoders Enable Efficient Knowledge Distillers) | 보이는 패치만 쓰고 teacher는 앞쪽 층만 돌림 | [arXiv: 2208.12256](https://arxiv.org/abs/2208.12256) | 토큰 + teacher 깊이 |  | ☐ | ☐ | |
+| S-02 | DMAE (Masked Autoencoders Enable Efficient Knowledge Distillers) | 보이는 패치만 쓰고 teacher는 앞쪽 층만 돌림 | [arXiv: 2208.12256](https://arxiv.org/abs/2208.12256) | 토큰 + teacher 깊이 | 메모 기준 teacher가 보이는 패치만, 정렬 층까지만 돎. 특징 증류(사전학습)라는 점을 표에 적을 것 | ☐ | ☐ | |
 | S-03 | Dyna-DINO | 학습 초반에 teacher 추론을 중간 층에서 멈춤 | [arXiv: 2606.19483](https://arxiv.org/abs/2606.19483) | teacher 깊이 (조기 종료) |  | ☐ | ☐ | |
 | S-04 | Asymmetric Masked Distillation (AMD) | student는 높은 마스킹, teacher는 낮은 마스킹 | [arXiv: 2311.03149](https://arxiv.org/abs/2311.03149) | 마스킹 비율 |  | ☐ | ☐ | |
-| S-05 | MaskAlign | student가 보이는 패치만 인코딩 | [arXiv: 2211.08887](https://arxiv.org/abs/2211.08887) | 마스킹 (student 쪽) | student 쪽만 줄이는지 확인 | ☐ | ☐ | |
+| S-05 | MaskAlign | student가 보이는 패치만 인코딩 | [arXiv: 2211.08887](https://arxiv.org/abs/2211.08887) | 마스킹 (student 쪽) | 메모 기준 teacher는 전체 이미지를 봄. teacher 연산을 줄이지 않음. 축에 둘지 미정 | ☐ | ☐ | |
 | S-06 | Decoupled KD (DKD) | 싼 logit 손실로 feature KD 수준 | [arXiv: 2203.08679](https://arxiv.org/abs/2203.08679) | 손실 설계 | teacher 연산을 줄이지 않음. 축에 둘지 미정 | ☐ | ☐ | |
 | S-07 | Information Theoretic Representation Distillation (ITRD) | 학습 오버헤드가 작은 손실 | [arXiv: 2112.00459](https://arxiv.org/abs/2112.00459) | 손실 설계 | teacher 연산을 줄이지 않음. 축에 둘지 미정 | ☐ | ☐ | |
 | S-08 | Understanding the Role of the Projector in KD | projector 설계로 싼 레시피 | [arXiv: 2303.11098](https://arxiv.org/abs/2303.11098) | 부가 모듈 | teacher 연산을 줄이지 않음. 축에 둘지 미정 | ☐ | ☐ | |
